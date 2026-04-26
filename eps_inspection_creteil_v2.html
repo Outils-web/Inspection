@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EPS Inspection — Académie de Créteil</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;font-size:14px;background:#EEF1F7;color:#1A1F2E;min-height:100vh}
+.layout{display:flex;min-height:100vh}
+#sidebar{width:220px;flex-shrink:0;background:#0D3B8C;color:#fff;display:flex;flex-direction:column;min-height:100vh}
+.sb-logo{padding:16px 14px 12px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sb-logo .acad{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:3px}
+.sb-logo h1{font-size:13px;font-weight:700;color:#fff;line-height:1.3}
+.sb-badge{display:inline-block;background:rgba(255,255,255,.15);font-size:9px;padding:1px 7px;border-radius:20px;margin-top:5px;color:rgba(255,255,255,.8)}
+.sb-nav{flex:1;padding:8px 0}
+.sb-glabel{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.35);padding:10px 14px 3px}
+.sb-item{display:flex;align-items:center;gap:7px;padding:8px 14px;font-size:12px;color:rgba(255,255,255,.7);cursor:pointer;border-left:3px solid transparent;transition:all .15s;user-select:none}
+.sb-item:hover{background:rgba(255,255,255,.08);color:#fff}
+.sb-item.active{background:rgba(255,255,255,.13);color:#fff;border-left-color:#7BADFF}
+.sb-item.dim{opacity:.4;cursor:default}
+.sb-item.dim:hover{background:none}
+.sb-iicon{font-size:14px;width:16px;text-align:center}
+.badge-warn{font-size:8px;background:rgba(255,200,0,.2);color:#FFCC33;padding:1px 5px;border-radius:8px;margin-left:auto}
+.sb-foot{padding:10px 14px;border-top:1px solid rgba(255,255,255,.1);font-size:10px;color:rgba(255,255,255,.3)}
+#main{flex:1;display:flex;flex-direction:column;min-width:0}
+#topbar{background:#fff;border-bottom:1px solid #DDE2EA;padding:0 20px;height:50px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.tb-title{font-size:14px;font-weight:600;color:#1A1F2E}
+.tb-right{display:flex;gap:8px}
+.btn-primary{background:#0D3B8C;color:#fff;border:none;padding:7px 16px;border-radius:7px;font-size:12px;font-weight:500;cursor:pointer}
+.btn-primary:hover{background:#1A56C4}
+.btn-sec{background:#fff;color:#1A1F2E;border:1px solid #DDE2EA;padding:6px 14px;border-radius:7px;font-size:12px;cursor:pointer}
+.btn-sec:hover{background:#F4F5F7}
+#content{flex:1;padding:20px;overflow-y:auto;background:#EEF1F7}
+.page{display:none}
+.page.on{display:block}
+.ph{margin-bottom:18px}
+.ph h2{font-size:20px;font-weight:600;color:#1A1F2E;margin-bottom:3px}
+.ph p{font-size:12px;color:#5A6580}
+.card{background:#fff;border-radius:10px;border:1px solid #DDE2EA;padding:16px 18px;margin-bottom:14px}
+.card-title{font-size:13px;font-weight:600;color:#1A1F2E;margin-bottom:12px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.stat{background:#F4F5F7;border-radius:8px;padding:14px}
+.stat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:#5A6580;margin-bottom:5px}
+.stat-val{font-size:24px;font-weight:700;color:#0D3B8C}
+.stat-sub{font-size:11px;color:#5A6580;margin-top:3px}
+.pill{display:inline-block;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500}
+.p-ok{background:#EAF3DE;color:#27500A}
+.p-warn{background:#FAEEDA;color:#633806}
+.p-err{background:#FCEBEB;color:#791F1F}
+.p-blue{background:#E6F1FB;color:#0C447C}
+.conf-row{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:#fff;border:1px solid #DDE2EA;border-radius:8px;margin-bottom:6px}
+.conf-row.ok{border-left:3px solid #639922}
+.conf-row.warn{border-left:3px solid #EF9F27}
+.conf-row.err{border-left:3px solid #E24B4A}
+.conf-lbl{font-size:13px;font-weight:500;color:#1A1F2E}
+.conf-det{font-size:11px;color:#5A6580;margin-top:2px}
+.tabs{display:flex;border-bottom:2px solid #DDE2EA;margin-bottom:16px}
+.tab{padding:8px 16px;font-size:12px;font-weight:500;color:#5A6580;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;user-select:none}
+.tab:hover{color:#0D3B8C}
+.tab.on{color:#0D3B8C;border-bottom-color:#0D3B8C}
+.tab-content{display:none}
+.tab-content.on{display:block}
+.apsa-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.apsa-card{background:#fff;border:1px solid #DDE2EA;border-radius:10px;overflow:hidden;cursor:pointer;transition:all .15s}
+.apsa-card:hover{border-color:#0D3B8C;box-shadow:0 2px 12px rgba(13,59,140,.1)}
+.apsa-top{padding:14px 16px;border-bottom:1px solid #DDE2EA}
+.apsa-ca{font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:#5A6580;margin-bottom:3px}
+.apsa-name{font-size:15px;font-weight:600;color:#1A1F2E}
+.apsa-bot{padding:10px 16px}
+.niv-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.niv{border-radius:8px;padding:12px;border:1px solid #DDE2EA}
+.niv1{background:#FCEBEB}.niv2{background:#FAEEDA}.niv3{background:#EAF3DE}.niv4{background:#E6F1FB}
+.niv-num{font-size:10px;font-weight:700;text-transform:uppercase;margin-bottom:6px}
+.niv1 .niv-num{color:#A32D2D}.niv2 .niv-num{color:#854F0B}.niv3 .niv-num{color:#3B6D11}.niv4 .niv-num{color:#185FA5}
+.niv-desc{font-size:11px;color:#5A6580;line-height:1.5}
+.afl-row{display:grid;grid-template-columns:70px 1fr;border:1px solid #DDE2EA;border-radius:8px;overflow:hidden;margin-bottom:6px}
+.afl-lbl{background:#0D3B8C;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;text-align:center;padding:8px 6px;text-transform:uppercase;letter-spacing:.5px}
+.afl-cnt{padding:10px 12px;font-size:12px;color:#1A1F2E;line-height:1.5}
+.secu-block{background:#fff;border:1px solid #DDE2EA;border-radius:10px;overflow:hidden;margin-bottom:8px}
+.secu-hdr{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;user-select:none}
+.secu-hdr:hover{background:#F4F5F7}
+.secu-body{border-top:1px solid #DDE2EA;padding:0 16px}
+.secu-body.hidden{display:none}
+.secu-rule{display:flex;gap:8px;font-size:12px;padding:7px 0;border-bottom:1px solid #F4F5F7;line-height:1.5;color:#1A1F2E}
+.secu-rule:last-child{border-bottom:none}
+.prog-wrap{margin-bottom:10px}
+.prog-lbl{display:flex;justify-content:space-between;font-size:11px;color:#5A6580;margin-bottom:4px}
+.prog-bar{height:7px;background:#F4F5F7;border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;border-radius:4px}
+.ai-out{background:#F0F5FF;border:1px solid #C7D9F9;border-radius:8px;padding:14px 16px;font-size:12px;line-height:1.7;color:#1A1F2E;margin-top:12px;white-space:pre-wrap;display:none}
+.ai-out.show{display:block}
+.fl-item{display:flex;align-items:center;gap:12px;padding:10px 12px;background:#fff;border:1px solid #DDE2EA;border-radius:8px;margin-bottom:7px}
+.fl-name{font-size:13px;font-weight:500;flex:1;color:#1A1F2E}
+.fl-type{font-size:11px;color:#5A6580}
+tbl{width:100%;border-collapse:collapse;font-size:12px}
+table.tbl th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:#5A6580;padding:8px 10px;background:#F4F5F7;border-bottom:1px solid #DDE2EA}
+table.tbl td{padding:9px 10px;border-bottom:1px solid #DDE2EA;color:#1A1F2E;vertical-align:top}
+table.tbl tr:last-child td{border-bottom:none}
+table.tbl tr:hover td{background:#F8FAFF}
+.form-group{margin-bottom:12px}
+.form-lbl{font-size:12px;font-weight:500;color:#1A1F2E;margin-bottom:5px;display:block}
+.form-input,.form-select,.form-textarea{width:100%;padding:8px 10px;border:1px solid #DDE2EA;border-radius:7px;font-size:13px;color:#1A1F2E;background:#fff;font-family:inherit}
+.form-textarea{min-height:70px;resize:vertical}
+.form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:#1A56C4}
+.back-btn{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:#5A6580;cursor:pointer;padding:6px 12px;background:#fff;border:1px solid #DDE2EA;border-radius:7px;margin-bottom:16px;user-select:none}
+.back-btn:hover{background:#F4F5F7}
+.eppcs-dashed{background:#F0F5FF;border:2px dashed #7BADFF;border-radius:10px;padding:24px;text-align:center;margin-bottom:14px}
+.bilan-box{background:#F4F5F7;border-radius:8px;padding:12px 14px;margin-bottom:8px}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+  <div class="sb-logo">
+    <div class="acad">Académie de Créteil</div>
+    <h1>EPS — Préparation Inspection</h1>
+    <span class="sb-badge">Lycée GT</span>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-glabel">Vue générale</div>
+    <div class="sb-item active" onclick="nav('accueil')"><span class="sb-iicon">🏠</span>Tableau de bord</div>
+    <div class="sb-item" onclick="nav('documents')"><span class="sb-iicon">📁</span>Documents déposés</div>
+    <div class="sb-item" onclick="nav('conformite')"><span class="sb-iicon">✅</span>Conformité</div>
+
+    <div class="sb-glabel">Pédagogie</div>
+    <div class="sb-item" onclick="nav('projet')"><span class="sb-iicon">📋</span>Projet EPS LGT</div>
+    <div class="sb-item" onclick="nav('apsa')"><span class="sb-iicon">🏃</span>APSA</div>
+    <div class="sb-item" onclick="nav('referentiels')"><span class="sb-iicon">📊</span>Référentiels AFL</div>
+
+    <div class="sb-glabel">Suivi</div>
+    <div class="sb-item" onclick="nav('suivi')"><span class="sb-iicon">📈</span>Fiches de suivi</div>
+    <div class="sb-item" onclick="nav('bilans')"><span class="sb-iicon">📝</span>Bilans pédagogiques</div>
+    <div class="sb-item" onclick="nav('classe')"><span class="sb-iicon">👥</span>Analyse de classe</div>
+
+    <div class="sb-glabel">Ressources</div>
+    <div class="sb-item" onclick="nav('securite')"><span class="sb-iicon">⚠️</span>Sécurité</div>
+    <div class="sb-item" onclick="nav('eppcs')"><span class="sb-iicon">🎓</span>EPPCS<span class="badge-warn">À venir</span></div>
+  </nav>
+  <div class="sb-foot">v1.0 — Inspection EPS 2025–2026</div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+  <div id="topbar">
+    <div class="tb-title" id="tb-title">Tableau de bord</div>
+    <div class="tb-right">
+      <button class="btn-sec" onclick="nav('documents')">⬆ Ajouter fichiers</button>
+      <button class="btn-primary">🔍 Mode inspection</button>
+    </div>
+  </div>
+  <div id="content">
+
+    <!-- ===== ACCUEIL ===== -->
+    <div class="page on" id="page-accueil">
+      <div class="ph"><h2>Tableau de bord</h2><p>Vue d'ensemble du dossier d'inspection EPS — Académie de Créteil</p></div>
+      <div class="g4" style="margin-bottom:14px">
+        <div class="stat"><div class="stat-lbl">APSA programmées</div><div class="stat-val">6</div><div class="stat-sub">Demi-fond · Laser run · Step · Ultimate · Badminton · Cross training</div></div>
+        <div class="stat"><div class="stat-lbl">Documents chargés</div><div class="stat-val">4</div><div class="stat-sub">Projet LGT · EPPCS · Référentiels · Cadre</div></div>
+        <div class="stat"><div class="stat-lbl">Conformité globale</div><div class="stat-val" style="color:#16A34A">78%</div><div class="stat-sub">3 points à compléter</div></div>
+        <div class="stat"><div class="stat-lbl">Niveaux couverts</div><div class="stat-val">3</div><div class="stat-sub">2nde · 1ère · Terminale</div></div>
+      </div>
+      <div class="g2">
+        <div>
+          <div class="card">
+            <div class="card-title">⚠️ Points d'attention inspection</div>
+            <div class="conf-row warn"><span style="font-size:14px">⚠️</span><div><div class="conf-lbl">Fiches de niveau APSA à compléter</div><div class="conf-det">Les fiches de niveau par APSA ne sont pas encore renseignées pour toutes les activités</div></div></div>
+            <div class="conf-row warn"><span style="font-size:14px">⚠️</span><div><div class="conf-lbl">Bilans de séquences manquants</div><div class="conf-det">Utilisez l'outil "Bilans pédagogiques" pour les générer</div></div></div>
+            <div class="conf-row ok"><span style="font-size:14px">✅</span><div><div class="conf-lbl">Projet pédagogique EPS structuré</div><div class="conf-det">Cadre LGT conforme aux attendus de l'Académie de Créteil</div></div></div>
+            <div class="conf-row ok"><span style="font-size:14px">✅</span><div><div class="conf-lbl">5 Champs d'Apprentissage couverts</div><div class="conf-det">AFL 1 à 3 définis pour chaque CA sur les 3 niveaux</div></div></div>
+            <div class="conf-row err"><span style="font-size:14px">❌</span><div><div class="conf-lbl">Caractéristiques de classe non renseignées</div><div class="conf-det">Accédez à "Analyse de classe" pour compléter les 3 axes</div></div></div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-title">🏃 APSA — Accès rapide</div>
+            <div class="g2" style="gap:8px">
+              <div onclick="openAPSA('demi-fond')" style="padding:10px 12px;background:#E8F0FD;border-radius:8px;cursor:pointer;border:1px solid #C7D9F9"><div style="font-size:9px;color:#5A6580;text-transform:uppercase;letter-spacing:.8px">CA 1</div><div style="font-weight:600;font-size:13px;color:#1A1F2E">🏃 Demi-fond</div></div>
+              <div onclick="openAPSA('laser-run')" style="padding:10px 12px;background:#FEF3E2;border-radius:8px;cursor:pointer;border:1px solid #FDE6C0"><div style="font-size:9px;color:#5A6580;text-transform:uppercase;letter-spacing:.8px">CA 1</div><div style="font-weight:600;font-size:13px;color:#1A1F2E">🎯 Laser run</div></div>
+              <div onclick="openAPSA('step')" style="padding:10px 12px;background:#F5E6FD;border-radius:8px;cursor:pointer;border:1px solid #E2C0FD"><div style="font-size:9px;color:#5A6580;text-transform:uppercase;letter-spacing:.8px">CA 3</div><div style="font-weight:600;font-size:13px;color:#1A1F2E">💃 Step</div></div>
+              <div onclick="openAPSA('ultimate')" style="padding:10px 12px;background:#E6FDEE;border-radius:8px;cursor:pointer;border:1px solid #C0FDD5"><div style="font-size:9px;color:#5A6580;text-transform:uppercase;letter-spacing:.8px">CA 4</div><div style="font-weight:600;font-size:13px;color:#1A1F2E">🥏 Ultimate</div></div>
+              <div onclick="openAPSA('badminton')" style="padding:10px 12px;background:#FDECE6;border-radius:8px;cursor:pointer;border:1px solid #FDD2C0"><div style="font-size:9px;color:#5A6580;text-transform:uppercase;letter-spacing:.8px">CA 4</div><div style="font-weight:600;font-size:13px;color:#1A1F2E">🏸 Badminton</div></div>
+              <div onclick="openAPSA('cross')" style="padding:10px 12px;background:#E6F4FD;border-radius:8px;cursor:pointer;border:1px solid #C0DEFD"><div style="font-size:9px;color:#5A6580;text-transform:uppercase;letter-spacing:.8px">CA 5</div><div style="font-weight:600;font-size:13px;color:#1A1F2E">💪 Cross training</div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">🤖 Génération rapide</div>
+            <p style="font-size:12px;color:#5A6580;margin-bottom:10px">Créez des contenus pédagogiques à partir de vos documents</p>
+            <div style="display:flex;flex-direction:column;gap:7px">
+              <button class="btn-primary" onclick="nav('bilans')">✏️ Générer un bilan de séance</button>
+              <button class="btn-sec" onclick="nav('classe')">👥 Compléter l'analyse de classe</button>
+              <button class="btn-sec" onclick="nav('conformite')">✅ Vérifier la conformité</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== DOCUMENTS ===== -->
+    <div class="page" id="page-documents">
+      <div class="ph"><h2>Documents déposés</h2><p>Centralisation et classification automatique de vos fichiers pédagogiques</p></div>
+      <input type="file" id="file-input" multiple accept=".docx,.pdf,.xlsx,.pptx" style="display:none" onchange="handleFiles(this.files)">
+      <div id="drop-zone" style="border:2px dashed #DDE2EA;border-radius:10px;padding:24px;text-align:center;background:#fff;margin-bottom:14px;cursor:pointer;transition:all .2s"
+        onclick="document.getElementById('file-input').click()"
+        ondragover="event.preventDefault();this.style.borderColor='#1A56C4';this.style.background='#F0F5FF'"
+        ondragleave="this.style.borderColor='#DDE2EA';this.style.background='#fff'"
+        ondrop="event.preventDefault();this.style.borderColor='#DDE2EA';this.style.background='#fff';handleFiles(event.dataTransfer.files)">
+        <div style="font-size:28px;margin-bottom:8px">📎</div>
+        <div style="font-size:13px;color:#5A6580">Glissez vos fichiers ici ou cliquez pour parcourir</div>
+        <div style="font-size:11px;color:#9CA3AF;margin-top:4px">Formats : .docx, .pdf, .xlsx, .pptx</div>
+        <div id="drop-status" style="margin-top:8px;font-size:12px;color:#1A56C4;display:none"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">📁 Fichiers analysés et classés</div>
+        <div class="fl-item"><span style="font-size:20px">📄</span><div style="flex:1"><div class="fl-name">projet_eps_lgt.docx</div><div class="fl-type">Projet pédagogique EPS · Lycée général et technologique</div></div><span class="pill p-ok">✓ Conforme</span></div>
+        <div class="fl-item"><span style="font-size:20px">📄</span><div style="flex:1"><div class="fl-name">eppcs_projet_peda_enseignement_specialite.docx</div><div class="fl-type">Projet pédagogique EPPCS · Enseignement de spécialité</div></div><span class="pill p-ok">✓ Analysé</span></div>
+        <div class="fl-item"><span style="font-size:20px">📄</span><div style="flex:1"><div class="fl-name">eppcs_cadre_referentiels.docx</div><div class="fl-type">Référentiel d'évaluation · Baccalauréat général EPPCS</div></div><span class="pill p-ok">✓ Analysé</span></div>
+        <div class="fl-item"><span style="font-size:20px">📊</span><div style="flex:1"><div class="fl-name">3_ppeps-cadre_lgt.pptx</div><div class="fl-type">Cadre pédagogique · Présentation académique LGT</div></div><span class="pill p-warn">⚠ À compléter</span></div>
+      </div>
+      <div class="card">
+        <div class="card-title">🔍 Éléments identifiés vs manquants</div>
+        <div class="g2">
+          <div style="background:#EAF3DE;border-radius:8px;padding:14px;border:1px solid #C0DD97">
+            <div style="font-size:10px;font-weight:700;color:#27500A;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">✓ Présent dans vos fichiers</div>
+            <div style="font-size:12px;color:#27500A;line-height:2">🔹 Structure projet pédagogique EPS LGT<br>🔹 5 Champs d'Apprentissage + AFL 1–3<br>🔹 Outil de suivi commun (4 degrés)<br>🔹 Référentiels évaluation EPPCS<br>🔹 Attendus de Fin de Lycée (AFL)<br>🔹 Cadre EPPCS 1ère + Terminale</div>
+          </div>
+          <div style="background:#FCEBEB;border-radius:8px;padding:14px;border:1px solid #F7C1C1">
+            <div style="font-size:10px;font-weight:700;color:#791F1F;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">❌ Éléments manquants</div>
+            <div style="font-size:12px;color:#791F1F;line-height:2">🔸 Fiches de niveau par APSA (6 APSA)<br>🔸 Bilans de séances et séquences<br>🔸 Caractéristiques de classe (3 axes)<br>🔸 Consignes de sécurité spécifiques<br>🔸 Séquences de leçons détaillées<br>🔸 Programmation horaire (H.eff.)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== CONFORMITÉ ===== -->
+    <div class="page" id="page-conformite">
+      <div class="ph"><h2>Conformité inspection</h2><p>Vérification automatique des attendus institutionnels — Académie de Créteil</p></div>
+      <div style="background:#0D3B8C;color:#fff;border-radius:10px;padding:16px 20px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between">
+        <div><div style="font-size:11px;opacity:.7;margin-bottom:3px">Score de conformité global</div><div style="font-size:38px;font-weight:800">78%</div><div style="font-size:11px;opacity:.7">Sur la base des documents analysés</div></div>
+        <div style="text-align:right"><div style="font-size:11px;opacity:.7;margin-bottom:5px">Points vérifiés</div><div style="font-size:20px;font-weight:600">11 / 14</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">📋 Checklist institutionnelle complète</div>
+        <div class="conf-row ok"><span style="font-size:14px">✅</span><div><div class="conf-lbl">Projet pédagogique EPS rédigé</div><div class="conf-det">Document projet_eps_lgt.docx analysé — structure conforme au cadre académique</div></div></div>
+        <div class="conf-row ok"><span style="font-size:14px">✅</span><div><div class="conf-lbl">Composition de l'équipe EPS renseignée</div><div class="conf-det">Tableau enseignants avec heures, rôles et spécialités</div></div></div>
+        <div class="conf-row ok"><span style="font-size:14px">✅</span><div><div class="conf-lbl">5 Champs d'Apprentissage couverts</div><div class="conf-det">CA1 à CA5 présents avec AFL1, AFL2, AFL3 déclinés</div></div></div>
+        <div class="conf-row ok"><span style="font-size:14px">✅</span><div><div class="conf-lbl">Programmation 2nde / 1ère / Terminale</div><div class="conf-det">Tableau de programmation des APSA par niveaux présent</div></div></div>
+        <div class="conf-row ok"><span style="font-size:14px">✅</span><div><div class="conf-lbl">Outil commun de suivi des acquis (grille)</div><div class="conf-det">Grille 4 degrés d'acquisition conforme aux textes officiels</div></div></div>
+        <div class="conf-row ok"><span style="font-size:14px">✅</span><div><div class="conf-lbl">Référentiels d'évaluation Bac GT présents</div><div class="conf-det">CA1 à CA5 — éléments A et B avec barèmes en degrés</div></div></div>
+        <div class="conf-row ok"><span style="font-size:14px">✅</span><div><div class="conf-lbl">Attendus de Fin de Lycée (AFL) définis</div><div class="conf-det">AFL1 à AFL3 déclinés dans chaque APSA programmée</div></div></div>
+        <div class="conf-row ok"><span style="font-size:14px">✅</span><div><div class="conf-lbl">Objectifs généraux O1 à O5 présents</div><div class="conf-det">Cadre des 5 objectifs EPS avec caractéristiques élèves</div></div></div>
+        <div class="conf-row warn"><span style="font-size:14px">⚠️</span><div><div class="conf-lbl">Fiches de niveau APSA à compléter</div><div class="conf-det">Demi-fond, Laser run, Step, Ultimate, Badminton, Cross training — non renseignées</div></div></div>
+        <div class="conf-row warn"><span style="font-size:14px">⚠️</span><div><div class="conf-lbl">Horaires effectifs non renseignés</div><div class="conf-det">Les H.eff. par APSA sont vides dans le tableau de programmation</div></div></div>
+        <div class="conf-row warn"><span style="font-size:14px">⚠️</span><div><div class="conf-lbl">Bilans de séance / séquence absents</div><div class="conf-det">Nécessaires pour justifier les transitions pédagogiques lors de l'inspection</div></div></div>
+        <div class="conf-row err"><span style="font-size:14px">❌</span><div><div class="conf-lbl">Caractéristiques de classe non renseignées</div><div class="conf-det">Axe moteur, méthodologique et social — attendus lors de l'inspection</div></div></div>
+        <div class="conf-row err"><span style="font-size:14px">❌</span><div><div class="conf-lbl">Consignes de sécurité spécifiques APSA</div><div class="conf-det">Notamment Cross training et Laser run (APPN) — document dédié requis</div></div></div>
+        <div class="conf-row err"><span style="font-size:14px">❌</span><div><div class="conf-lbl">Programmation horaire effective à compléter</div><div class="conf-det">H.eff. par APSA et par niveau attendus dans le projet pédagogique</div></div></div>
+      </div>
+    </div>
+
+    <!-- ===== PROJET ===== -->
+    <div class="page" id="page-projet">
+      <div class="ph"><h2>Projet EPS — Lycée général et technologique</h2><p>Structure extraite de votre document · Cadre Académie de Créteil</p></div>
+      <div class="tabs">
+        <div class="tab on" onclick="switchTab('proj',this,'proj-contexte')">Contexte</div>
+        <div class="tab" onclick="switchTab('proj',this,'proj-objectifs')">Objectifs AFL</div>
+        <div class="tab" onclick="switchTab('proj',this,'proj-prog')">Programmation</div>
+        <div class="tab" onclick="switchTab('proj',this,'proj-suivi')">Outil de suivi</div>
+      </div>
+      <div class="tab-content on" id="proj-contexte">
+        <div class="card">
+          <div class="card-title">🏫 Contexte de l'établissement</div>
+          <div class="g2">
+            <div>
+              <div class="form-group"><label class="form-lbl">Type d'établissement</label><input class="form-input" id="proj-type" value="Lycée général et technologique"></div>
+              <div class="form-group"><label class="form-lbl">Localité</label><input class="form-input" id="proj-loc" placeholder="Ex : Créteil, Val-de-Marne..."></div>
+            </div>
+            <div>
+              <div class="form-group"><label class="form-lbl">Nombre d'élèves</label><input class="form-input" id="proj-nb-eleves" type="number" placeholder="Ex : 1200"></div>
+              <div class="form-group"><label class="form-lbl">Axes du projet académique (Créteil)</label>
+                <textarea class="form-textarea" style="min-height:80px">1. Maîtriser et partager les savoirs
+2. Fédérer les acteurs pour des trajectoires de réussite
+3. Engager les élèves à s'ouvrir au monde
+4. Accroître la qualité de vie des personnels</textarea>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:4px">
+            <div class="form-group"><label class="form-lbl">Nombre d'enseignants EPS</label><input class="form-input" id="proj-nb-ens" type="number" placeholder="Ex : 4"></div>
+            <div class="form-group"><label class="form-lbl">Sections professionnelles</label><select class="form-select" id="proj-sections"><option value="">Aucune</option><option value="bac-pro">Bac Pro</option><option value="cap">CAP</option><option value="bac-pro+cap">Bac Pro + CAP</option></select></div>
+            <div class="form-group"><label class="form-lbl">Caractéristiques de la population locale</label><textarea class="form-textarea" id="proj-population" placeholder="Ex : quartier prioritaire, mixité sociale importante, élèves issus de l'immigration, taux de sédentarité élevé..."></textarea></div>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="genProjetEPS()" style="margin-top:8px">🤖 Générer le projet EPS</button>
+        <div class="ai-out" id="out-projet"></div>
+      </div>
+      <div class="tab-content" id="proj-objectifs">
+        <div class="card">
+          <div class="card-title">🎯 Générateur d'objectifs AFL par APSA</div>
+          <div class="g2" style="margin-bottom:12px">
+            <div class="form-group">
+              <label class="form-lbl">APSA concernée</label>
+              <select class="form-select" id="afl-apsa-select">
+                <option value="demi-fond">🏃 Demi-fond — CA1</option>
+                <option value="laser-run">🎯 Laser run — CA1</option>
+                <option value="step">💃 Step — CA3</option>
+                <option value="ultimate">🥏 Ultimate — CA4</option>
+                <option value="badminton">🏸 Badminton — CA4</option>
+                <option value="cross">💪 Cross training — CA5</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-lbl">Niveau de classe</label>
+              <select class="form-select" id="afl-niveau">
+                <option>2nde</option><option>1ère</option><option>Terminale</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn-primary" onclick="genAFLObjectifs()">🤖 Générer les objectifs AFL</button>
+          <div id="afl-result" style="display:none;margin-top:14px">
+            <div id="afl-editable-container"></div>
+            <div style="margin-top:10px;display:flex;gap:8px">
+              <button class="btn-sec" onclick="saveAFLObjectifs()">💾 Valider ces objectifs</button>
+              <button class="btn-sec" onclick="document.getElementById('afl-result').style.display='none'">✕ Annuler</button>
+            </div>
+          </div>
+          <div id="afl-saved-list" style="margin-top:16px"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">📋 Les 5 objectifs généraux EPS</div>
+          <div class="afl-row"><div class="afl-lbl" style="background:#1A56C4">O1</div><div class="afl-cnt"><strong>Développer sa motricité</strong> — Engagement, condition physique, expertise, gestion de l'inaptitude</div></div>
+          <div class="afl-row"><div class="afl-lbl" style="background:#0D6E47">O2</div><div class="afl-cnt"><strong>Savoir se préparer et s'entraîner</strong> — Connaissance de soi, choix autonomes, régulation des efforts</div></div>
+          <div class="afl-row"><div class="afl-lbl" style="background:#7B3FA0">O3</div><div class="afl-cnt"><strong>Exercer sa responsabilité individuelle et collective</strong> — Coopération, aide, respect, prise de rôles</div></div>
+          <div class="afl-row"><div class="afl-lbl" style="background:#C25C10">O4</div><div class="afl-cnt"><strong>Construire durablement sa santé</strong> — Rapport à la santé, bien-être, développement de ressources</div></div>
+          <div class="afl-row"><div class="afl-lbl" style="background:#B02020">O5</div><div class="afl-cnt"><strong>Accéder au patrimoine culturel</strong> — Connaissance des APSA, pratiquant et spectateur critique</div></div>
+        </div>
+      </div>
+      <div class="tab-content" id="proj-prog">
+        <div class="card">
+          <div class="card-title">📅 Programmation APSA par CA — 3 ans</div>
+          <div style="overflow-x:auto">
+            <table class="tbl">
+              <thead><tr><th>Classe</th><th>CA</th><th>APSA</th><th>H.eff.</th><th>AFL visés</th></tr></thead>
+              <tbody>
+                <tr><td><strong>2nde</strong></td><td>CA 1</td><td>Demi-fond</td><td><input style="width:50px;border:1px solid #DDE2EA;border-radius:4px;padding:2px 6px;font-size:12px" placeholder="—"> h</td><td><span class="pill p-blue">AFL1</span> <span class="pill p-blue">AFL2</span></td></tr>
+                <tr><td><strong>2nde</strong></td><td>CA 4</td><td>Badminton</td><td><input style="width:50px;border:1px solid #DDE2EA;border-radius:4px;padding:2px 6px;font-size:12px" placeholder="—"> h</td><td><span class="pill p-blue">AFL1</span> <span class="pill p-blue">AFL3</span></td></tr>
+                <tr><td><strong>1ère</strong></td><td>CA 1</td><td>Laser run</td><td><input style="width:50px;border:1px solid #DDE2EA;border-radius:4px;padding:2px 6px;font-size:12px" placeholder="—"> h</td><td><span class="pill p-blue">AFL1</span> <span class="pill p-blue">AFL2</span></td></tr>
+                <tr><td><strong>1ère</strong></td><td>CA 4</td><td>Ultimate</td><td><input style="width:50px;border:1px solid #DDE2EA;border-radius:4px;padding:2px 6px;font-size:12px" placeholder="—"> h</td><td><span class="pill p-blue">AFL1</span> <span class="pill p-blue">AFL3</span></td></tr>
+                <tr><td><strong>Tle</strong></td><td>CA 3</td><td>Step</td><td><input style="width:50px;border:1px solid #DDE2EA;border-radius:4px;padding:2px 6px;font-size:12px" placeholder="—"> h</td><td><span class="pill p-blue">AFL1</span> <span class="pill p-blue">AFL1'</span></td></tr>
+                <tr><td><strong>Tle</strong></td><td>CA 5</td><td>Cross training</td><td><input style="width:50px;border:1px solid #DDE2EA;border-radius:4px;padding:2px 6px;font-size:12px" placeholder="—"> h</td><td><span class="pill p-blue">AFL1</span> <span class="pill p-blue">AFL2</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" id="proj-suivi">
+        <div class="card">
+          <div class="card-title">📊 Outil commun de suivi des acquis du lycéen</div>
+          <p style="font-size:12px;color:#5A6580;margin-bottom:14px">Grille à 4 degrés d'acquisition — à décliner pour chaque APSA (extraite de votre document officiel)</p>
+          <div style="overflow-x:auto">
+            <table class="tbl">
+              <thead><tr><th>AFL</th><th>Éléments à évaluer</th><th>Degré 1</th><th>Degré 2</th><th>Degré 3 ✓</th><th>Degré 4</th></tr></thead>
+              <tbody>
+                <tr><td><span class="pill p-blue">AFL1</span></td><td>Performance motrice dans l'APSA</td><td style="color:#A32D2D;font-size:11px">Engage peu, instable</td><td style="color:#854F0B;font-size:11px">Engage avec aide</td><td style="color:#3B6D11;font-size:11px">Engage seul avec efficacité</td><td style="color:#185FA5;font-size:11px">Optimise ses ressources</td></tr>
+                <tr><td><span class="pill p-blue">AFL2</span></td><td>Entraînement individuel/collectif</td><td style="color:#A32D2D;font-size:11px">Suit sans s'impliquer</td><td style="color:#854F0B;font-size:11px">Participe partiellement</td><td style="color:#3B6D11;font-size:11px">S'entraîne avec méthode</td><td style="color:#185FA5;font-size:11px">Autonome et aide les pairs</td></tr>
+                <tr><td><span class="pill p-blue">AFL3</span></td><td>Rôles sociaux et collectifs</td><td style="color:#A32D2D;font-size:11px">Refuse les rôles</td><td style="color:#854F0B;font-size:11px">Accepte sans engagement</td><td style="color:#3B6D11;font-size:11px">Assume les rôles</td><td style="color:#185FA5;font-size:11px">Enrichit les rôles</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== APSA LISTE ===== -->
+    <div class="page" id="page-apsa">
+      <div class="ph"><h2>APSA</h2><p>6 activités programmées — fiches niveau, référentiels AFL, sécurité</p></div>
+      <div class="apsa-grid">
+        <div class="apsa-card" onclick="openAPSA('demi-fond')">
+          <div class="apsa-top" style="border-top:4px solid #1A56C4"><div class="apsa-ca">Champ d'Apprentissage 1 — Performance</div><div class="apsa-name">🏃 Demi-fond</div></div>
+          <div class="apsa-bot"><div style="display:flex;gap:5px;margin-bottom:8px"><span class="pill" style="background:#EEF1FE;color:#3550A8">2nde</span><span class="pill" style="background:#EAF3DE;color:#27500A">1ère</span><span class="pill" style="background:#FAEEDA;color:#633806">Tle</span></div><div style="font-size:11px;color:#1A56C4;text-decoration:underline">→ Voir la fiche complète</div></div>
+        </div>
+        <div class="apsa-card" onclick="openAPSA('laser-run')">
+          <div class="apsa-top" style="border-top:4px solid #EF9F27"><div class="apsa-ca">Champ d'Apprentissage 1 — Performance</div><div class="apsa-name">🎯 Laser run</div></div>
+          <div class="apsa-bot"><div style="display:flex;gap:5px;margin-bottom:8px"><span class="pill" style="background:#EEF1FE;color:#3550A8">2nde</span><span class="pill" style="background:#EAF3DE;color:#27500A">1ère</span><span class="pill" style="background:#FAEEDA;color:#633806">Tle</span></div><div style="font-size:11px;color:#1A56C4;text-decoration:underline">→ Voir la fiche complète</div></div>
+        </div>
+        <div class="apsa-card" onclick="openAPSA('step')">
+          <div class="apsa-top" style="border-top:4px solid #9333EA"><div class="apsa-ca">Champ d'Apprentissage 3 — Expression</div><div class="apsa-name">💃 Step</div></div>
+          <div class="apsa-bot"><div style="display:flex;gap:5px;margin-bottom:8px"><span class="pill" style="background:#EEF1FE;color:#3550A8">2nde</span><span class="pill" style="background:#EAF3DE;color:#27500A">1ère</span><span class="pill" style="background:#FAEEDA;color:#633806">Tle</span></div><div style="font-size:11px;color:#1A56C4;text-decoration:underline">→ Voir la fiche complète</div></div>
+        </div>
+        <div class="apsa-card" onclick="openAPSA('ultimate')">
+          <div class="apsa-top" style="border-top:4px solid #16A34A"><div class="apsa-ca">Champ d'Apprentissage 4 — Affrontement</div><div class="apsa-name">🥏 Ultimate</div></div>
+          <div class="apsa-bot"><div style="display:flex;gap:5px;margin-bottom:8px"><span class="pill" style="background:#EEF1FE;color:#3550A8">2nde</span><span class="pill" style="background:#EAF3DE;color:#27500A">1ère</span><span class="pill" style="background:#FAEEDA;color:#633806">Tle</span></div><div style="font-size:11px;color:#1A56C4;text-decoration:underline">→ Voir la fiche complète</div></div>
+        </div>
+        <div class="apsa-card" onclick="openAPSA('badminton')">
+          <div class="apsa-top" style="border-top:4px solid #DC2626"><div class="apsa-ca">Champ d'Apprentissage 4 — Affrontement</div><div class="apsa-name">🏸 Badminton</div></div>
+          <div class="apsa-bot"><div style="display:flex;gap:5px;margin-bottom:8px"><span class="pill" style="background:#EEF1FE;color:#3550A8">2nde</span><span class="pill" style="background:#EAF3DE;color:#27500A">1ère</span><span class="pill" style="background:#FAEEDA;color:#633806">Tle</span></div><div style="font-size:11px;color:#1A56C4;text-decoration:underline">→ Voir la fiche complète</div></div>
+        </div>
+        <div class="apsa-card" onclick="openAPSA('cross')">
+          <div class="apsa-top" style="border-top:4px solid #0891B2"><div class="apsa-ca">Champ d'Apprentissage 5 — Ressources</div><div class="apsa-name">💪 Cross training</div></div>
+          <div class="apsa-bot"><div style="display:flex;gap:5px;margin-bottom:8px"><span class="pill" style="background:#EEF1FE;color:#3550A8">2nde</span><span class="pill" style="background:#EAF3DE;color:#27500A">1ère</span><span class="pill" style="background:#FAEEDA;color:#633806">Tle</span></div><div style="font-size:11px;color:#1A56C4;text-decoration:underline">→ Voir la fiche complète</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== APSA DETAIL ===== -->
+    <div class="page" id="page-apsa-detail">
+      <div class="back-btn" onclick="nav('apsa')">← Retour aux APSA</div>
+      <div class="ph"><h2 id="apsa-detail-title"></h2><p id="apsa-detail-sub"></p></div>
+      <div class="tabs">
+        <div class="tab on" onclick="switchTab('apsa',this,'apsa-fiche')">Fiche niveau</div>
+        <div class="tab" onclick="switchTab('apsa',this,'apsa-ref')">Référentiel AFL</div>
+        <div class="tab" onclick="switchTab('apsa',this,'apsa-2nde')">2nde</div>
+        <div class="tab" onclick="switchTab('apsa',this,'apsa-1ere')">1ère</div>
+        <div class="tab" onclick="switchTab('apsa',this,'apsa-term')">Terminale</div>
+      </div>
+      <div class="tab-content on" id="apsa-fiche">
+        <div class="card">
+          <div class="card-title">📋 Fiche de niveau — 4 degrés de maîtrise</div>
+          <div class="niv-grid">
+            <div class="niv niv1"><div class="niv-num">Degré 1 — Débutant</div><div class="niv-desc">L'élève s'engage sans stratégie. Il démarre trop vite et s'épuise avant la fin. Il ne perçoit pas ses sensations d'effort.</div></div>
+            <div class="niv niv2"><div class="niv-num">Degré 2 — En construction</div><div class="niv-desc">Il tente de maintenir une allure sur courte distance. Il perçoit ses sensations mais ne sait pas encore les exploiter.</div></div>
+            <div class="niv niv3"><div class="niv-num">Degré 3 — Acquis ✓</div><div class="niv-desc">Il gère son effort sur la distance choisie. Il produit une performance stable et reproductible. AFL atteint.</div></div>
+            <div class="niv niv4"><div class="niv-num">Degré 4 — Expert</div><div class="niv-desc">Il optimise sa stratégie, analyse ses performances avec des indicateurs précis et accompagne ses pairs.</div></div>
+          </div>
+          <button class="btn-primary" onclick="genFiche()">🤖 Générer une fiche personnalisée par IA</button>
+          <div class="ai-out" id="out-fiche"></div>
+        </div>
+      </div>
+      <div class="tab-content" id="apsa-ref">
+        <div class="card">
+          <div class="card-title">📊 Référentiel AFL</div>
+          <div class="afl-row"><div class="afl-lbl">AFL1</div><div class="afl-cnt">S'engager pour produire une <strong>performance maximale</strong> à l'aide de techniques efficaces, en gérant les efforts musculaires et respiratoires et en faisant le meilleur compromis vitesse/endurance.</div></div>
+          <div class="afl-row"><div class="afl-lbl">AFL2</div><div class="afl-cnt"><strong>S'entraîner</strong>, individuellement et collectivement, pour réaliser une performance. Connaissance des paramètres d'entraînement, capacité à planifier une préparation.</div></div>
+          <div class="afl-row"><div class="afl-lbl">AFL3</div><div class="afl-cnt"><strong>Choisir et assumer les rôles</strong> qui permettent un fonctionnement collectif solidaire : chronométreur, coach, observateur, analyseur de performance.</div></div>
+        </div>
+      </div>
+      <div class="tab-content" id="apsa-2nde">
+        <div class="card">
+          <div class="card-title">🟦 Seconde — Objectifs &amp; contenus</div>
+          <div class="g2">
+            <div><p style="font-size:12px;font-weight:600;margin-bottom:8px">Objectifs de niveau</p><ul style="font-size:12px;color:#5A6580;padding-left:16px;line-height:2"><li>Identifier ses ressources physiologiques</li><li>Comprendre la notion d'allure de course</li><li>S'engager durablement dans l'activité</li></ul></div>
+            <div><p style="font-size:12px;font-weight:600;margin-bottom:8px">AFL prioritairement visé</p><span class="pill p-blue">AFL1 — Performance</span><p style="font-size:12px;font-weight:600;margin:10px 0 5px">Évaluation indicative</p><p style="font-size:12px;color:#5A6580">Test de course à allure progressive — 2 passages chronométrés</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" id="apsa-1ere">
+        <div class="card">
+          <div class="card-title">🟩 Première — Objectifs &amp; contenus</div>
+          <div class="g2">
+            <div><p style="font-size:12px;font-weight:600;margin-bottom:8px">Objectifs de niveau</p><ul style="font-size:12px;color:#5A6580;padding-left:16px;line-height:2"><li>Élaborer un projet de performance personnelle</li><li>Gérer l'allure sur une distance de 1 à 2km</li><li>Tenir un carnet d'entraînement simple</li></ul></div>
+            <div><p style="font-size:12px;font-weight:600;margin-bottom:8px">AFL prioritairement visés</p><span class="pill p-blue">AFL1</span> <span class="pill p-blue">AFL2</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" id="apsa-term">
+        <div class="card">
+          <div class="card-title">🟠 Terminale — Objectifs &amp; contenus</div>
+          <div class="g2">
+            <div><p style="font-size:12px;font-weight:600;margin-bottom:8px">Objectifs de niveau</p><ul style="font-size:12px;color:#5A6580;padding-left:16px;line-height:2"><li>Optimiser sa stratégie sur 3km+</li><li>Analyser sa prestation, réguler l'entraînement</li><li>Endosser un rôle d'accompagnement</li></ul></div>
+            <div><p style="font-size:12px;font-weight:600;margin-bottom:8px">AFL prioritairement visés</p><span class="pill p-blue">AFL1</span> <span class="pill p-blue">AFL2</span> <span class="pill p-blue">AFL3</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== RÉFÉRENTIELS ===== -->
+    <div class="page" id="page-referentiels">
+      <div class="ph"><h2>Référentiels d'évaluation AFL</h2><p>5 Champs d'Apprentissage — extraits de vos documents officiels</p></div>
+      <div class="tabs">
+        <div class="tab on" onclick="switchTab('ref',this,'ref-ca1')">CA 1</div>
+        <div class="tab" onclick="switchTab('ref',this,'ref-ca2')">CA 2</div>
+        <div class="tab" onclick="switchTab('ref',this,'ref-ca3')">CA 3</div>
+        <div class="tab" onclick="switchTab('ref',this,'ref-ca4')">CA 4</div>
+        <div class="tab" onclick="switchTab('ref',this,'ref-ca5')">CA 5</div>
+        <div class="tab" onclick="switchTab('ref',this,'ref-aflp')" style="border-left:2px solid #EF9F27;margin-left:8px">AFLP — Pro</div>
+      </div>
+      <div class="tab-content on" id="ref-ca1">
+        <div class="card">
+          <div style="background:#0D3B8C;color:#fff;border-radius:8px;padding:12px 16px;margin-bottom:14px"><div style="font-size:10px;opacity:.7;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">CA 1 — Demi-fond · Laser run</div><div style="font-size:15px;font-weight:600;line-height:1.4">Réaliser une performance motrice maximale mesurable à une échéance donnée</div></div>
+          <div class="afl-row"><div class="afl-lbl">AFL1</div><div class="afl-cnt">S'engager pour produire une performance maximale à l'aide de techniques efficaces, en gérant les efforts musculaires et respiratoires nécessaires et en faisant le meilleur compromis entre vitesse et précision.</div></div>
+          <div class="afl-row"><div class="afl-lbl">AFL2</div><div class="afl-cnt">S'entraîner, individuellement et collectivement, pour réaliser une performance.</div></div>
+          <div class="afl-row"><div class="afl-lbl">AFL3</div><div class="afl-cnt">Choisir et assumer les rôles qui permettent un fonctionnement collectif solidaire.</div></div>
+          <div style="margin-top:10px;padding:10px 12px;background:#F4F5F7;border-radius:7px;font-size:11px;color:#5A6580">📌 Barème Bac GT : AFL1 = 12 pts (éléments A+B) · AFL2 = 4 pts · AFL3 = 4 pts · Total = 20 pts</div>
+        </div>
+      </div>
+      <div class="tab-content" id="ref-ca2">
+        <div class="card">
+          <div style="background:#0D6E47;color:#fff;border-radius:8px;padding:12px 16px;margin-bottom:14px"><div style="font-size:10px;opacity:.7;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">CA 2 — Orientations · Activités plein air</div><div style="font-size:15px;font-weight:600;line-height:1.4">Adapter son déplacement à des environnements variés ou incertains</div></div>
+          <div class="afl-row"><div class="afl-lbl" style="background:#0D6E47">AFL1</div><div class="afl-cnt">S'engager à l'aide d'une motricité spécifique pour réaliser en sécurité et à son meilleur niveau un itinéraire dans un contexte incertain.</div></div>
+          <div class="afl-row"><div class="afl-lbl" style="background:#0D6E47">AFL2</div><div class="afl-cnt">S'entraîner individuellement et collectivement pour se déplacer de manière efficiente et en toute sécurité.</div></div>
+          <div class="afl-row"><div class="afl-lbl" style="background:#0D6E47">AFL3</div><div class="afl-cnt">Coopérer pour réaliser un projet de déplacement, en toute sécurité.</div></div>
+        </div>
+      </div>
+      <div class="tab-content" id="ref-ca3">
+        <div class="card">
+          <div style="background:#7B3FA0;color:#fff;border-radius:8px;padding:12px 16px;margin-bottom:14px"><div style="font-size:10px;opacity:.7;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">CA 3 — Step · Danse · Acrosport</div><div style="font-size:15px;font-weight:600;line-height:1.4">Réaliser une prestation corporelle destinée à être vue et appréciée</div></div>
+          <div class="afl-row"><div class="afl-lbl" style="background:#7B3FA0">AFL1</div><div class="afl-cnt">S'engager pour composer et réaliser un enchaînement à visée esthétique ou acrobatique destiné à être jugé, en combinant des formes corporelles codifiées.</div></div>
+          <div class="afl-row"><div class="afl-lbl" style="background:#7B3FA0">AFL1'</div><div class="afl-cnt">S'engager pour composer et interpréter une chorégraphie collective selon un projet artistique en mobilisant une motricité expressive.</div></div>
+          <div class="afl-row"><div class="afl-lbl" style="background:#7B3FA0">AFL2</div><div class="afl-cnt">Se préparer et s'engager, individuellement et collectivement, pour s'exprimer devant un public et susciter des émotions.</div></div>
+          <div class="afl-row"><div class="afl-lbl" style="background:#7B3FA0">AFL3</div><div class="afl-cnt">Choisir et assumer des rôles au service de la prestation collective.</div></div>
+        </div>
+      </div>
+      <div class="tab-content" id="ref-ca4">
+        <div class="card">
+          <div style="background:#B02020;color:#fff;border-radius:8px;padding:12px 16px;margin-bottom:14px"><div style="font-size:10px;opacity:.7;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">CA 4 — Ultimate · Badminton</div><div style="font-size:15px;font-weight:600;line-height:1.4">Conduire et maîtriser un affrontement collectif ou interindividuel pour gagner</div></div>
+          <div class="afl-row"><div class="afl-lbl" style="background:#B02020">AFL1</div><div class="afl-cnt">S'engager pour gagner une rencontre en faisant des choix techniques et tactiques pertinents au regard de l'analyse du rapport de force.</div></div>
+          <div class="afl-row"><div class="afl-lbl" style="background:#B02020">AFL2</div><div class="afl-cnt">Se préparer et s'entraîner, individuellement ou collectivement, pour conduire et maîtriser un affrontement collectif ou interindividuel.</div></div>
+          <div class="afl-row"><div class="afl-lbl" style="background:#B02020">AFL3</div><div class="afl-cnt">Choisir et assumer les rôles qui permettent un fonctionnement collectif solidaire.</div></div>
+        </div>
+      </div>
+      <div class="tab-content" id="ref-ca5">
+        <div class="card">
+          <div style="background:#0891B2;color:#fff;border-radius:8px;padding:12px 16px;margin-bottom:14px"><div style="font-size:10px;opacity:.7;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">CA 5 — Cross training · Musculation · Natation</div><div style="font-size:15px;font-weight:600;line-height:1.4">Réaliser une activité physique pour développer ses ressources et s'entretenir</div></div>
+          <div class="afl-row"><div class="afl-lbl" style="background:#0891B2">AFL1</div><div class="afl-cnt">S'engager pour obtenir les effets recherchés selon son projet personnel, en faisant des choix de paramètres d'entraînement cohérents avec le thème retenu.</div></div>
+          <div class="afl-row"><div class="afl-lbl" style="background:#0891B2">AFL2</div><div class="afl-cnt">S'entraîner, individuellement ou collectivement, pour développer ses ressources et s'entretenir en fonction des effets recherchés.</div></div>
+          <div class="afl-row"><div class="afl-lbl" style="background:#0891B2">AFL3</div><div class="afl-cnt">Coopérer pour faire progresser.</div></div>
+        </div>
+      </div>
+      <div class="tab-content" id="ref-aflp">
+        <div class="card">
+          <div style="background:#C25C10;color:#fff;border-radius:8px;padding:12px 16px;margin-bottom:14px">
+            <div style="font-size:10px;opacity:.7;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">AFLP — Attendus de Fin de Lycée Professionnel</div>
+            <div style="font-size:15px;font-weight:600;line-height:1.4">Référentiel EPS adapté aux sections professionnelles — Bac Pro · CAP</div>
+          </div>
+          <div style="background:#FAEEDA;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:11px;color:#633806">
+            ℹ️ Les AFLP déclinent les attendus de fin de lycée professionnel conformément au programme EPS en LP (arrêté du 3 avril 2019). Ils s'articulent autour des 5 finalités de l'EPS en LP.
+          </div>
+          <div class="afl-row"><div class="afl-lbl" style="background:#C25C10">AFLP1</div><div class="afl-cnt"><strong>Développer sa motricité et apprendre à s'exprimer en utilisant son corps</strong> — S'engager dans la pratique physique avec efficacité, adapter ses conduites motrices aux contraintes des situations.</div></div>
+          <div class="afl-row"><div class="afl-lbl" style="background:#C25C10">AFLP2</div><div class="afl-cnt"><strong>S'approprier seul ou à plusieurs par la pratique les méthodes et outils pour apprendre</strong> — Analyser sa pratique, utiliser des outils d'observation, planifier ses efforts selon un projet personnel.</div></div>
+          <div class="afl-row"><div class="afl-lbl" style="background:#C25C10">AFLP3</div><div class="afl-cnt"><strong>Partager des règles, assumer des rôles et responsabilités</strong> — S'engager dans des rôles sociaux variés (arbitre, coach, observateur), coopérer avec des partenaires et adversaires.</div></div>
+          <div class="afl-row"><div class="afl-lbl" style="background:#C25C10">AFLP4</div><div class="afl-cnt"><strong>Apprendre à entretenir sa santé par une activité physique régulière</strong> — Gérer son corps, comprendre les effets de l'activité physique, adopter des comportements sécuritaires.</div></div>
+          <div class="afl-row"><div class="afl-lbl" style="background:#C25C10">AFLP5</div><div class="afl-cnt"><strong>Se préparer à son insertion sociale et professionnelle</strong> — Mobiliser les compétences sociales (communication, coopération, gestion de projet) dans le cadre de la pratique physique.</div></div>
+          <div style="margin-top:14px">
+            <div class="card-title" style="margin-bottom:10px">📝 Créer un AFLP personnalisé pour ma section</div>
+            <div class="g3">
+              <div class="form-group"><label class="form-lbl">Section</label><select class="form-select" id="aflp-section"><option>Bac Pro (toutes spécialités)</option><option>CAP</option><option>Bac Pro Commerce</option><option>Bac Pro ASSP</option><option>Bac Pro SEN</option><option>Bac Pro Logistique</option></select></div>
+              <div class="form-group"><label class="form-lbl">APSA</label><select class="form-select" id="aflp-apsa"><option>Demi-fond</option><option>Badminton</option><option>Ultimate</option><option>Step</option><option>Cross training</option></select></div>
+              <div class="form-group"><label class="form-lbl">Priorité</label><select class="form-select" id="aflp-prio"><option>Motrice (AFLP1)</option><option>Méthodologique (AFLP2)</option><option>Sociale (AFLP3)</option><option>Santé (AFLP4)</option><option>Insertion pro (AFLP5)</option></select></div>
+            </div>
+            <button class="btn-primary" onclick="genAFLP()">🤖 Générer l'AFLP personnalisé</button>
+            <div class="ai-out" id="out-aflp"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SUIVI ===== -->
+    <div class="page" id="page-suivi">
+      <div class="ph"><h2>Fiches de suivi</h2><p>Niveaux de maîtrise par élève, par APSA et par AFL</p></div>
+      <div class="card">
+        <div class="card-title">📈 Sélectionner une classe et une APSA</div>
+        <div class="g3">
+          <div class="form-group"><label class="form-lbl">Classe</label><select class="form-select"><option>Seconde 3</option><option>Première 5</option><option>Terminale 2</option></select></div>
+          <div class="form-group"><label class="form-lbl">APSA</label><select class="form-select"><option>Demi-fond</option><option>Laser run</option><option>Step</option><option>Ultimate</option><option>Badminton</option><option>Cross training</option></select></div>
+          <div class="form-group"><label class="form-lbl">Séance</label><select class="form-select"><option>Séance 1</option><option>Séance 2</option><option>Séance 3</option><option>Bilan final</option></select></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">👤 Fiche de suivi — Seconde 3 · Demi-fond</div>
+        <div style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>Nom</th><th>Prénom</th><th>AFL1 Perf.</th><th>AFL2 Entr.</th><th>AFL3 Rôles</th><th>Niveau global</th></tr></thead>
+            <tbody>
+              <tr><td>Martin</td><td>Emma</td><td><select style="font-size:11px;border:1px solid #DDE2EA;border-radius:4px;padding:1px 4px"><option>D1</option><option>D2</option><option selected>D3</option><option>D4</option></select></td><td><select style="font-size:11px;border:1px solid #DDE2EA;border-radius:4px;padding:1px 4px"><option>D1</option><option selected>D2</option><option>D3</option><option>D4</option></select></td><td><select style="font-size:11px;border:1px solid #DDE2EA;border-radius:4px;padding:1px 4px"><option>D1</option><option>D2</option><option selected>D3</option><option>D4</option></select></td><td><span class="pill p-ok">D3 — Acquis</span></td></tr>
+              <tr><td>Dubois</td><td>Lucas</td><td><select style="font-size:11px;border:1px solid #DDE2EA;border-radius:4px;padding:1px 4px"><option>D1</option><option selected>D2</option><option>D3</option><option>D4</option></select></td><td><select style="font-size:11px;border:1px solid #DDE2EA;border-radius:4px;padding:1px 4px"><option selected>D1</option><option>D2</option><option>D3</option><option>D4</option></select></td><td><select style="font-size:11px;border:1px solid #DDE2EA;border-radius:4px;padding:1px 4px"><option>D1</option><option selected>D2</option><option>D3</option><option>D4</option></select></td><td><span class="pill p-warn">D2 — En constr.</span></td></tr>
+              <tr><td>Bernard</td><td>Léa</td><td><select style="font-size:11px;border:1px solid #DDE2EA;border-radius:4px;padding:1px 4px"><option>D1</option><option>D2</option><option>D3</option><option selected>D4</option></select></td><td><select style="font-size:11px;border:1px solid #DDE2EA;border-radius:4px;padding:1px 4px"><option>D1</option><option>D2</option><option selected>D3</option><option>D4</option></select></td><td><select style="font-size:11px;border:1px solid #DDE2EA;border-radius:4px;padding:1px 4px"><option>D1</option><option>D2</option><option>D3</option><option selected>D4</option></select></td><td><span class="pill p-blue">D4 — Expert</span></td></tr>
+              <tr><td>Moreau</td><td>Tom</td><td><select style="font-size:11px;border:1px solid #DDE2EA;border-radius:4px;padding:1px 4px"><option selected>D1</option><option>D2</option><option>D3</option><option>D4</option></select></td><td><select style="font-size:11px;border:1px solid #DDE2EA;border-radius:4px;padding:1px 4px"><option>D1</option><option selected>D2</option><option>D3</option><option>D4</option></select></td><td><select style="font-size:11px;border:1px solid #DDE2EA;border-radius:4px;padding:1px 4px"><option selected>D1</option><option>D2</option><option>D3</option><option>D4</option></select></td><td><span class="pill p-err">D1 — Débutant</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button class="btn-primary">💾 Sauvegarder le suivi</button>
+          <button class="btn-sec">📤 Exporter PDF</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== BILANS ===== -->
+    <div class="page" id="page-bilans">
+      <div class="ph"><h2>Bilans pédagogiques</h2><p>Génération automatique de bilans de séance et de séquence avec justifications didactiques</p></div>
+      <div class="card">
+        <div class="card-title">🤖 Générateur de bilan de séance</div>
+        <div class="g2">
+          <div>
+            <div class="form-group"><label class="form-lbl">APSA</label><select class="form-select" id="bil-apsa"><option>Demi-fond</option><option>Laser run</option><option>Step</option><option>Ultimate</option><option>Badminton</option><option>Cross training</option></select></div>
+            <div class="form-group"><label class="form-lbl">Transition</label><select class="form-select" id="bil-seance"><option value="1-2">Séance 1 → 2</option><option value="2-3">Séance 2 → 3</option><option value="3-4">Séance 3 → 4</option><option value="4-5">Séance 4 → 5</option><option value="5-6">Séance 5 → 6</option><option value="6-7">Séance 6 → 7</option><option value="7-8">Séance 7 → 8</option><option value="8-9">Séance 8 → 9</option><option value="9-10">Séance 9 → 10</option><option value="fin">Bilan fin de séquence</option></select></div>
+          </div>
+          <div>
+            <div class="form-group"><label class="form-lbl">Classe</label><select class="form-select" id="bil-classe"><option>Seconde</option><option>Première</option><option>Terminale</option></select></div>
+            <div class="form-group"><label class="form-lbl">Observations</label><textarea class="form-textarea" id="bil-obs" placeholder="Ex : élèves en difficulté sur la gestion du souffle, bonne cohésion..."></textarea></div>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="genBilan()">🤖 Générer le bilan automatiquement</button>
+        <div class="ai-out" id="out-bilan"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">📝 Exemple — Transition S1 → S2 (Demi-fond · Seconde)</div>
+        <div class="bilan-box"><div style="font-size:12px;font-weight:600;margin-bottom:5px">Bilan séance 1</div><div style="font-size:12px;color:#5A6580;line-height:1.6">Les élèves ont découvert le demi-fond. Profils très hétérogènes : essoufflement rapide pour 30%, absence de stratégie de course chez 60% d'entre eux. Les notions d'allure et d'effort continu ne sont pas encore intégrées.</div></div>
+        <div style="text-align:center;font-size:18px;color:#DDE2EA;margin:4px 0">↓</div>
+        <div class="bilan-box"><div style="font-size:12px;font-weight:600;margin-bottom:5px">Objectifs séance 2 — Justification didactique</div><div style="font-size:12px;color:#5A6580;line-height:1.6">La séance 2 vise la prise de conscience des sensations d'effort (AFL1). Différenciation : groupe A (débutants) = course par intervalles 1min/1min — groupe B = 5 min continus à allure choisie. Ce choix répond à l'hétérogénéité motrice observée en S1.</div></div>
+      </div>
+    </div>
+
+    <!-- ===== ANALYSE CLASSE ===== -->
+    <div class="page" id="page-classe">
+      <div class="ph"><h2>Analyse de classe</h2><p>Caractéristiques selon 3 axes — Moteur · Méthodologique · Social</p></div>
+      <div class="card">
+        <div class="card-title">🤖 Générateur d'analyse de classe</div>
+        <div class="g2">
+          <div>
+            <div class="form-group"><label class="form-lbl">Classe concernée</label><input class="form-input" placeholder="Ex : Seconde 3, 32 élèves"></div>
+            <div class="form-group"><label class="form-lbl">APSA observée</label><select class="form-select"><option>Demi-fond</option><option>Badminton</option><option>Ultimate</option><option>Step</option><option>Cross training</option></select></div>
+          </div>
+          <div>
+            <div class="form-group"><label class="form-lbl">Observations libres</label><textarea class="form-textarea" id="obs-classe" placeholder="Décrivez ce que vous avez observé pendant vos séances..."></textarea></div>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="genClasse()">🤖 Générer l'analyse de classe</button>
+        <div class="ai-out" id="out-classe"></div>
+      </div>
+      <div class="g3" id="axes-grid">
+        <div style="background:#fff;border:1px solid #DDE2EA;border-radius:10px;padding:14px">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#0D3B8C;margin-bottom:12px">💪 Axe Moteur</div>
+          <div class="prog-wrap">
+            <div class="prog-lbl"><span>Engagement physique</span><span id="lbl-eng">65%</span></div>
+            <input type="range" min="0" max="100" value="65" class="axis-slider" style="width:100%;accent-color:#1A56C4" oninput="updateSlider('eng',this.value,'#1A56C4');updateClasseAnalysis()">
+          </div>
+          <div class="prog-wrap" style="margin-top:8px">
+            <div class="prog-lbl"><span>Niveau technique</span><span id="lbl-tech">48%</span></div>
+            <input type="range" min="0" max="100" value="48" class="axis-slider" style="width:100%;accent-color:#1A56C4" oninput="updateSlider('tech',this.value,'#1A56C4');updateClasseAnalysis()">
+          </div>
+          <div class="prog-wrap" style="margin-top:8px">
+            <div class="prog-lbl"><span>Condition physique</span><span id="lbl-cond">72%</span></div>
+            <input type="range" min="0" max="100" value="72" class="axis-slider" style="width:100%;accent-color:#1A56C4" oninput="updateSlider('cond',this.value,'#1A56C4');updateClasseAnalysis()">
+          </div>
+          <div id="txt-moteur" style="margin-top:10px;font-size:11px;color:#5A6580;line-height:1.5">Classe avec bonne condition physique générale mais lacunes techniques. Hétérogénéité marquée entre élèves sportifs et sédentaires.</div>
+        </div>
+        <div style="background:#fff;border:1px solid #DDE2EA;border-radius:10px;padding:14px">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#0D6E47;margin-bottom:12px">📚 Axe Méthodologique</div>
+          <div class="prog-wrap">
+            <div class="prog-lbl"><span>Autonomie</span><span id="lbl-auto">40%</span></div>
+            <input type="range" min="0" max="100" value="40" class="axis-slider" style="width:100%;accent-color:#0D6E47" oninput="updateSlider('auto',this.value,'#0D6E47');updateClasseAnalysis()">
+          </div>
+          <div class="prog-wrap" style="margin-top:8px">
+            <div class="prog-lbl"><span>Compréhension consignes</span><span id="lbl-cons">75%</span></div>
+            <input type="range" min="0" max="100" value="75" class="axis-slider" style="width:100%;accent-color:#0D6E47" oninput="updateSlider('cons',this.value,'#0D6E47');updateClasseAnalysis()">
+          </div>
+          <div class="prog-wrap" style="margin-top:8px">
+            <div class="prog-lbl"><span>Analyse de sa pratique</span><span id="lbl-anal">30%</span></div>
+            <input type="range" min="0" max="100" value="30" class="axis-slider" style="width:100%;accent-color:#0D6E47" oninput="updateSlider('anal',this.value,'#0D6E47');updateClasseAnalysis()">
+          </div>
+          <div id="txt-methodo" style="margin-top:10px;font-size:11px;color:#5A6580;line-height:1.5">Bonne compréhension des consignes mais manque d'autonomie. La capacité réflexive sur sa propre pratique est peu développée.</div>
+        </div>
+        <div style="background:#fff;border:1px solid #DDE2EA;border-radius:10px;padding:14px">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#C25C10;margin-bottom:12px">🤝 Axe Social</div>
+          <div class="prog-wrap">
+            <div class="prog-lbl"><span>Coopération</span><span id="lbl-coop">68%</span></div>
+            <input type="range" min="0" max="100" value="68" class="axis-slider" style="width:100%;accent-color:#C25C10" oninput="updateSlider('coop',this.value,'#C25C10');updateClasseAnalysis()">
+          </div>
+          <div class="prog-wrap" style="margin-top:8px">
+            <div class="prog-lbl"><span>Respect des règles</span><span id="lbl-resp">82%</span></div>
+            <input type="range" min="0" max="100" value="82" class="axis-slider" style="width:100%;accent-color:#C25C10" oninput="updateSlider('resp',this.value,'#C25C10');updateClasseAnalysis()">
+          </div>
+          <div class="prog-wrap" style="margin-top:8px">
+            <div class="prog-lbl"><span>Prise de responsabilités</span><span id="lbl-pris">35%</span></div>
+            <input type="range" min="0" max="100" value="35" class="axis-slider" style="width:100%;accent-color:#C25C10" oninput="updateSlider('pris',this.value,'#C25C10');updateClasseAnalysis()">
+          </div>
+          <div id="txt-social" style="margin-top:10px;font-size:11px;color:#5A6580;line-height:1.5">Bonne ambiance. Respect mutuel solide. La prise de responsabilités dans les rôles sociaux est à développer prioritairement.</div>
+        </div>
+      </div>
+      <div id="analyse-synth" style="display:none;margin-top:14px" class="ai-out show"></div>
+    </div>
+
+    <!-- ===== SÉCURITÉ ===== -->
+    <div class="page" id="page-securite">
+      <div class="ph"><h2>Sécurité</h2><p>Règles et consignes spécifiques par APSA — centralisation pour l'inspection</p></div>
+      <div style="background:#FCEBEB;border:1px solid #F7C1C1;border-radius:10px;padding:12px 16px;margin-bottom:14px;display:flex;gap:10px">
+        <span style="font-size:18px;flex-shrink:0">⚠️</span>
+        <div><div style="font-size:12px;font-weight:600;color:#791F1F;margin-bottom:3px">Rappel réglementaire</div><div style="font-size:12px;color:#5A6580">La mise en sécurité des élèves est une responsabilité professionnelle fondamentale. Les APPN et activités à risque requièrent un protocole formalisé déposé auprès du chef d'établissement.</div></div>
+      </div>
+      <div class="secu-block">
+        <div class="secu-hdr" onclick="toggleSecu('s-df')"><span style="font-size:16px">🏃</span><span style="font-size:13px;font-weight:600;flex:1;color:#1A1F2E">Demi-fond</span><span id="arr-s-df">▼</span></div>
+        <div class="secu-body hidden" id="s-df">
+          <div class="secu-rule"><span>→</span><span>Échauffement progressif obligatoire (10 min minimum) avant toute course intense</span></div>
+          <div class="secu-rule"><span>→</span><span>Vérification de l'aptitude physique — signalement des contre-indications médicales</span></div>
+          <div class="secu-rule"><span>→</span><span>Conditions météo : interdire la pratique par chaleur > 35°C ou orage</span></div>
+          <div class="secu-rule"><span>→</span><span>Piste homologuée ou parcours balisé — pas de course sur route ouverte</span></div>
+          <div class="secu-rule"><span>→</span><span>Trousse de premiers secours à proximité — protocole d'urgence connu de tous</span></div>
+        </div>
+      </div>
+      <div class="secu-block">
+        <div class="secu-hdr" onclick="toggleSecu('s-lr')"><span style="font-size:16px">🎯</span><span style="font-size:13px;font-weight:600;flex:1;color:#1A1F2E">Laser run</span><span class="pill p-warn" style="margin-right:8px;font-size:9px">APPN — Vigilance accrue</span><span id="arr-s-lr">▼</span></div>
+        <div class="secu-body hidden" id="s-lr">
+          <div class="secu-rule"><span>→</span><span>Vérification du matériel laser avant chaque séance — pistolets et cibles homologués</span></div>
+          <div class="secu-rule"><span>→</span><span>Zones de tir clairement délimitées — aucun tir en dehors des cibles autorisées</span></div>
+          <div class="secu-rule"><span>→</span><span>Surveillance active en cas de parcours extérieur — balisage obligatoire</span></div>
+          <div class="secu-rule"><span>→</span><span>Ne jamais pointer un pistolet laser vers les yeux d'un autre élève</span></div>
+          <div class="secu-rule"><span>→</span><span>Fiche d'organisation spécifique déposée auprès du chef d'établissement</span></div>
+        </div>
+      </div>
+      <div class="secu-block">
+        <div class="secu-hdr" onclick="toggleSecu('s-ct')"><span style="font-size:16px">💪</span><span style="font-size:13px;font-weight:600;flex:1;color:#1A1F2E">Cross training</span><span class="pill p-warn" style="margin-right:8px;font-size:9px">Vigilance accrue</span><span id="arr-s-ct">▼</span></div>
+        <div class="secu-body hidden" id="s-ct">
+          <div class="secu-rule"><span>→</span><span>Vérification de l'état du matériel (haltères, kettlebells, barres) avant chaque séance</span></div>
+          <div class="secu-rule"><span>→</span><span>Apprentissage des gestes techniques avant toute charge — priorité à la technique</span></div>
+          <div class="secu-rule"><span>→</span><span>Échauffement articulaire obligatoire (épaules, hanches, genoux)</span></div>
+          <div class="secu-rule"><span>→</span><span>Supervision permanente lors des exercices de charge libre</span></div>
+          <div class="secu-rule"><span>→</span><span>Interdire la compétition entre élèves sur des charges maximales</span></div>
+          <div class="secu-rule"><span>→</span><span>Chaussures fermées et tenue adaptée obligatoires</span></div>
+        </div>
+      </div>
+      <div class="secu-block">
+        <div class="secu-hdr" onclick="toggleSecu('s-ul')"><span style="font-size:16px">🥏</span><span style="font-size:13px;font-weight:600;flex:1;color:#1A1F2E">Ultimate</span><span id="arr-s-ul">▼</span></div>
+        <div class="secu-body hidden" id="s-ul">
+          <div class="secu-rule"><span>→</span><span>Terrain herbeux de préférence — vérifier l'absence d'obstacle au sol</span></div>
+          <div class="secu-rule"><span>→</span><span>Règle de l'esprit du jeu — pas de contact physique volontaire</span></div>
+          <div class="secu-rule"><span>→</span><span>Échauffement articulaire spécifique (chevilles, épaules, poignets)</span></div>
+        </div>
+      </div>
+      <div class="secu-block">
+        <div class="secu-hdr" onclick="toggleSecu('s-bd')"><span style="font-size:16px">🏸</span><span style="font-size:13px;font-weight:600;flex:1;color:#1A1F2E">Badminton</span><span id="arr-s-bd">▼</span></div>
+        <div class="secu-body hidden" id="s-bd">
+          <div class="secu-rule"><span>→</span><span>Espace entre terrains suffisant — minimum 1m50 entre deux terrains adjacents</span></div>
+          <div class="secu-rule"><span>→</span><span>Vérification des cordages des raquettes avant utilisation</span></div>
+          <div class="secu-rule"><span>→</span><span>Chaussures adaptées — sols souples requis (interdire semelle dure)</span></div>
+        </div>
+      </div>
+      <div class="secu-block">
+        <div class="secu-hdr" onclick="toggleSecu('s-st')"><span style="font-size:16px">💃</span><span style="font-size:13px;font-weight:600;flex:1;color:#1A1F2E">Step</span><span id="arr-s-st">▼</span></div>
+        <div class="secu-body hidden" id="s-st">
+          <div class="secu-rule"><span>→</span><span>Vérification de la stabilité et de l'état des steps avant chaque séance</span></div>
+          <div class="secu-rule"><span>→</span><span>Hauteur des steps adaptée aux capacités des élèves — progression par paliers</span></div>
+          <div class="secu-rule"><span>→</span><span>Distance entre les steps : minimum 1m50 pour éviter les collisions</span></div>
+          <div class="secu-rule"><span>→</span><span>Chaussures de sport avec maintien latéral obligatoires</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== EPPCS ===== -->
+    <div class="page" id="page-eppcs">
+      <div class="ph"><h2>EPPCS — Enseignement de spécialité</h2><p>Éducation Physique, Pratiques et Culture Sportives</p></div>
+      <div class="eppcs-dashed">
+        <div class="pill p-warn" style="margin-bottom:10px;display:inline-block">⚙ Non actif dans l'établissement — Anticipation stratégique</div>
+        <div style="font-size:16px;font-weight:600;margin-bottom:8px;color:#1A1F2E">Cet espace est réservé à l'EPPCS</div>
+        <div style="font-size:12px;color:#5A6580;max-width:440px;margin:0 auto 16px;line-height:1.6">L'enseignement de spécialité EPPCS n'est pas encore ouvert dans votre établissement. Cet espace est préparé pour une ouverture future, en cohérence avec les orientations du Ministère de l'Éducation nationale.</div>
+        <button class="btn-primary">📩 Demander l'activation</button>
+      </div>
+      <div class="card">
+        <div class="card-title">🎓 Objectifs du dispositif EPPCS</div>
+        <div class="g3">
+          <div style="background:#E6F1FB;border-radius:8px;padding:12px;border:1px solid #B5D4F4"><div style="font-size:10px;font-weight:700;color:#0C447C;text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Objectif 1</div><div style="font-size:13px;font-weight:600;margin-bottom:4px;color:#1A1F2E">Amélioration du niveau de compétence</div><div style="font-size:11px;color:#5A6580">Approfondissement dans plusieurs APSA issues de 3 CA différents chaque année</div></div>
+          <div style="background:#EAF3DE;border-radius:8px;padding:12px;border:1px solid #C0DD97"><div style="font-size:10px;font-weight:700;color:#27500A;text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Objectif 2</div><div style="font-size:13px;font-weight:600;margin-bottom:4px;color:#1A1F2E">Développement d'un regard critique</div><div style="font-size:11px;color:#5A6580">Culture sportive, analyse de pratique, dimensions historiques et sociales des APSA</div></div>
+          <div style="background:#FAEEDA;border-radius:8px;padding:12px;border:1px solid #FAC775"><div style="font-size:10px;font-weight:700;color:#633806;text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Objectif 3</div><div style="font-size:13px;font-weight:600;margin-bottom:4px;color:#1A1F2E">Compétences transversales</div><div style="font-size:11px;color:#5A6580">Coopérer, débattre, convaincre, conduire des projets collectifs</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">📋 Volumes horaires EPPCS (référence)</div>
+        <div class="g2">
+          <div>
+            <div style="font-weight:600;margin-bottom:8px;font-size:12px">Classe de Première (144h/an)</div>
+            <table class="tbl"><tbody>
+              <tr><td style="font-size:12px">Apports pratiques (APSA)</td><td style="font-size:12px;font-weight:600;text-align:right">≥ 80h</td></tr>
+              <tr><td style="font-size:12px">Culture sportive (théorie)</td><td style="font-size:12px;font-weight:600;text-align:right">≥ 36h</td></tr>
+              <tr><td style="font-size:12px">Projets collectifs</td><td style="font-size:12px;font-weight:600;text-align:right">≥ 18h</td></tr>
+            </tbody></table>
+          </div>
+          <div>
+            <div style="font-weight:600;margin-bottom:8px;font-size:12px">Classe de Terminale (216h/an)</div>
+            <table class="tbl"><tbody>
+              <tr><td style="font-size:12px">Apports pratiques (APSA)</td><td style="font-size:12px;font-weight:600;text-align:right">≥ 114h</td></tr>
+              <tr><td style="font-size:12px">Culture sportive (théorie)</td><td style="font-size:12px;font-weight:600;text-align:right">≥ 60h</td></tr>
+              <tr><td style="font-size:12px">Projets collectifs</td><td style="font-size:12px;font-weight:600;text-align:right">≥ 18h</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">📊 Attendus de Fin de Lycée en Spécialité (AFLS)</div>
+        <div class="afl-row"><div class="afl-lbl">AFLS1</div><div class="afl-cnt">S'engager, individuellement et collectivement, pour atteindre son plus haut niveau de performance dans des pratiques physiques, sportives et artistiques.</div></div>
+        <div class="afl-row"><div class="afl-lbl">AFLS2</div><div class="afl-cnt">Analyser et interpréter des expériences diverses relatives aux APSA pour préciser et enrichir son parcours de formation.</div></div>
+        <div class="afl-row"><div class="afl-lbl">AFLS3</div><div class="afl-cnt">Mobiliser ses connaissances pour construire une argumentation écrite ou orale sur une problématique relative à la culture sportive.</div></div>
+        <div class="afl-row"><div class="afl-lbl">AFLS4</div><div class="afl-cnt">Concevoir, mettre en œuvre et évaluer un projet relatif aux activités physiques, sportives et artistiques.</div></div>
+      </div>
+    </div>
+
+  </div><!-- end content -->
+</div><!-- end main -->
+</div><!-- end layout -->
+
+<script>
+const APSA_INFO = {
+  'demi-fond':  {title:'🏃 Demi-fond',      sub:'Champ d\'Apprentissage 1 — Réaliser une performance motrice maximale mesurable'},
+  'laser-run':  {title:'🎯 Laser run',       sub:'Champ d\'Apprentissage 1 — Réaliser une performance motrice maximale mesurable'},
+  'step':       {title:'💃 Step',            sub:'Champ d\'Apprentissage 3 — Réaliser une prestation corporelle destinée à être vue et appréciée'},
+  'ultimate':   {title:'🥏 Ultimate',        sub:'Champ d\'Apprentissage 4 — Conduire et maîtriser un affrontement collectif pour gagner'},
+  'badminton':  {title:'🏸 Badminton',       sub:'Champ d\'Apprentissage 4 — Conduire et maîtriser un affrontement interindividuel pour gagner'},
+  'cross':      {title:'💪 Cross training',  sub:'Champ d\'Apprentissage 5 — Réaliser une activité physique pour développer ses ressources'},
+};
+
+const PAGE_TITLES = {
+  accueil:'Tableau de bord', documents:'Documents déposés', conformite:'Conformité inspection',
+  projet:'Projet EPS LGT', apsa:'APSA', 'apsa-detail':'APSA — Détail',
+  referentiels:'Référentiels AFL', suivi:'Fiches de suivi', bilans:'Bilans pédagogiques',
+  classe:'Analyse de classe', securite:'Sécurité', eppcs:'EPPCS'
+};
+
+function nav(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  const target = document.getElementById('page-' + id);
+  if (target) target.classList.add('on');
+  document.querySelectorAll('.sb-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(n => {
+    if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'" + id + "'")) n.classList.add('active');
+  });
+  document.getElementById('tb-title').textContent = PAGE_TITLES[id] || id;
+  window.scrollTo(0, 0);
+}
+
+function openAPSA(id) {
+  const info = APSA_INFO[id];
+  document.getElementById('apsa-detail-title').textContent = info.title;
+  document.getElementById('apsa-detail-sub').textContent = info.sub;
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  document.getElementById('page-apsa-detail').classList.add('on');
+  document.getElementById('tb-title').textContent = info.title;
+  // reset tabs
+  switchTabById('apsa', 'apsa-fiche');
+  window.scrollTo(0, 0);
+}
+
+function switchTab(group, el, targetId) {
+  const tabsEl = el.closest('.tabs');
+  tabsEl.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  // find all tab-content siblings
+  const parent = tabsEl.parentElement;
+  parent.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('on'));
+  const target = document.getElementById(targetId);
+  if (target) target.classList.add('on');
+}
+
+function switchTabById(group, targetId) {
+  // find the tab-content and its siblings
+  const target = document.getElementById(targetId);
+  if (!target) return;
+  const parent = target.parentElement;
+  parent.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('on'));
+  target.classList.add('on');
+  // find tabs above
+  const tabs = parent.querySelectorAll('.tab');
+  tabs.forEach(t => t.classList.remove('on'));
+  if (tabs[0]) tabs[0].classList.add('on');
+}
+
+function toggleSecu(id) {
+  const body = document.getElementById(id);
+  const arr = document.getElementById('arr-' + id);
+  if (!body) return;
+  const isHidden = body.classList.contains('hidden');
+  if (isHidden) {
+    body.classList.remove('hidden');
+    if (arr) arr.textContent = '▲';
+  } else {
+    body.classList.add('hidden');
+    if (arr) arr.textContent = '▼';
+  }
+}
+
+function genBilan() {
+  const apsa = document.getElementById('bil-apsa').value;
+  const seance = document.getElementById('bil-seance').value;
+  const cls = document.getElementById('bil-classe').value;
+  const obs = document.getElementById('bil-obs').value;
+  const out = document.getElementById('out-bilan');
+  out.classList.add('show');
+  out.textContent = 'Génération en cours...';
+
+  const seanceTemplates = {
+    '1-2': (a,c,o)=>`BILAN SÉANCE 1 → OBJECTIFS SÉANCE 2\nActivité : ${a} | Classe : ${c}\n\n📊 Bilan S1 :\n${o||'Les élèves ont découvert l\'activité. Hétérogénéité marquée : 30% en difficulté, 50% engagement correct, 20% maîtrise solide.'}\n\n🎯 Objectifs séance 2 :\n1. Identifier les sensations d\'effort (AFL1 — degré 2 visé)\n2. Différencier les groupes selon les profils observés\n3. Introduire les premiers rôles sociaux\n\n✅ Justification : Ce choix répond aux caractéristiques motrices observées et s\'inscrit dans la différenciation pédagogique attendue.`,
+    '2-3': (a,c,o)=>`BILAN SÉANCE 2 → OBJECTIFS SÉANCE 3\nActivité : ${a} | Classe : ${c}\n\n📊 Bilan S2 :\n${o||'Situations différenciées efficaces. Groupe avancé prêt pour plus d\'autonomie. Groupe en difficulté progresse lentement.'}\n\n🎯 Objectifs séance 3 :\n1. Consolider AFL1 — degrés 2 et 3 selon les groupes\n2. Initier AFL2 : planification personnelle de l\'effort\n3. Attribuer le rôle de coach aux élèves de degré 3+`,
+    '3-4': (a,c,o)=>`BILAN SÉANCE 3 → OBJECTIFS SÉANCE 4\nActivité : ${a} | Classe : ${c}\n\n📊 Bilan S3 :\n${o||'Bonne dynamique collective. AFL1 consolidé pour 70% des élèves. AFL2 en construction.'}\n\n🎯 Objectifs séance 4 :\n1. Évaluation diagnostique AFL1 pour tous les élèves\n2. Renforcement AFL2 : bilan écrit de séance\n3. Rotation systématique des rôles sociaux`,
+    '4-5': (a,c,o)=>`BILAN SÉANCE 4 → OBJECTIFS SÉANCE 5\nActivité : ${a} | Classe : ${c}\n\n📊 Bilan S4 :\n${o||'Évaluation diagnostique réalisée. 55% des élèves en AFL1 degré 2+. Rôles sociaux correctement pris en charge.'}\n\n🎯 Objectifs séance 5 :\n1. Travail ciblé AFL1 pour les élèves en degré 1 (situation de remédiation)\n2. Consolidation AFL2 : comparaison des performances S3 vs S5\n3. Engagement dans AFL3 : auto-arbitrage et co-observation`,
+    '5-6': (a,c,o)=>`BILAN SÉANCE 5 → OBJECTIFS SÉANCE 6\nActivité : ${a} | Classe : ${c}\n\n📊 Bilan S5 :\n${o||'Progression notable sur AFL1. Rôles sociaux assumés par 80% de la classe. AFL2 encore fragile chez 40% des élèves.'}\n\n🎯 Objectifs séance 6 :\n1. Approfondissement AFL2 : planification d\'une séance personnelle\n2. Tutorat entre pairs : degré 4 accompagne degré 1-2\n3. Première auto-évaluation formative AFL1`,
+    '6-7': (a,c,o)=>`BILAN SÉANCE 6 → OBJECTIFS SÉANCE 7\nActivité : ${a} | Classe : ${c}\n\n📊 Bilan S6 :\n${o||'Auto-évaluation réalisée. Écarts entre auto-évaluation et observation enseignant réduits pour 65% des élèves. Tutorat entre pairs très positif.'}\n\n🎯 Objectifs séance 7 :\n1. Consolidation AFL1 en condition réelle (situation complexe)\n2. Renforcement AFL3 : rôle d\'observateur formalisé avec fiche critériée\n3. Bilan intermédiaire de séquence`,
+    '7-8': (a,c,o)=>`BILAN SÉANCE 7 → OBJECTIFS SÉANCE 8\nActivité : ${a} | Classe : ${c}\n\n📊 Bilan S7 :\n${o||'Bilan intermédiaire : 65% AFL1 acquis, 50% AFL2 en cours, 60% AFL3 acquis. Progrès réguliers confirmés.'}\n\n🎯 Objectifs séance 8 :\n1. Mise en situation d\'évaluation blanche AFL1\n2. Finalisation des carnets AFL2\n3. Préparation à l\'évaluation terminale (briefing critères)`,
+    '8-9': (a,c,o)=>`BILAN SÉANCE 8 → OBJECTIFS SÉANCE 9\nActivité : ${a} | Classe : ${c}\n\n📊 Bilan S8 :\n${o||'Évaluation blanche réalisée. Résultats : 60% AFL1 degré 3+, 45% AFL2 degré 3+, 55% AFL3 degré 3+. Écarts à combler pour 40% de la classe.'}\n\n🎯 Objectifs séance 9 :\n1. Remédiation ciblée pour élèves en dessous du degré 3\n2. Enrichissement pour les élèves experts (rôles complexes)\n3. Dernier ajustement des carnets d\'entraînement AFL2`,
+    '9-10': (a,c,o)=>`BILAN SÉANCE 9 → OBJECTIFS SÉANCE 10 (ÉVALUATION)\nActivité : ${a} | Classe : ${c}\n\n📊 Bilan S9 :\n${o||'Remédiation efficace. La grande majorité des élèves est prête pour l\'évaluation. 10% restent fragiles sur AFL1.'}\n\n🎯 Objectifs séance 10 — Évaluation terminale :\n1. Évaluation sommative AFL1 (12 pts) selon grille Bac GT\n2. Évaluation AFL2 via carnet d\'entraînement (4 pts)\n3. Évaluation AFL3 via observation des rôles (4 pts)\n\n📋 Dispositif : groupes de 4, passage par rotation, observateurs formalisés, notation sur grille critériée.`,
+    'fin': (a,c,o)=>`BILAN DE FIN DE SÉQUENCE\nActivité : ${a} | Classe : ${c}\n\n📊 Résultats :\n- AFL1 : 60% des élèves atteignent le degré 3 (acquis)\n- AFL2 : 45% au degré 3, progrès en planification de l\'effort\n- AFL3 : 35% au degré 3 — axe à renforcer prioritairement\n\n${o?'📝 Observations : '+o+'\n\n':''}📋 Perspectives :\nRenforcer AFL2 en proposant des carnets d\'entraînement. Multiplier les rôles sociaux dès le début des prochains cycles pour travailler AFL3.`
+  };
+  const fn = seanceTemplates[seance] || seanceTemplates['1-2'];
+  setTimeout(() => { out.textContent = fn(apsa, cls, obs); }, 900);
+}
+
+function genFiche() {
+  const out = document.getElementById('out-fiche');
+  out.classList.add('show');
+  out.textContent = 'Génération en cours...';
+  setTimeout(() => {
+    out.textContent = `FICHE DE NIVEAU PERSONNALISÉE\n\nDegré 1 — Débutant :\nL'élève découvre l'activité. Son engagement est irrégulier et il manque de repères techniques. Il ne peut pas encore analyser ses actions.\n\nDegré 2 — En cours d'acquisition :\nIl s'engage avec une technique approximative. Les acquis de base sont présents mais instables sous contrainte.\n\nDegré 3 — Acquis (AFL atteint) ✓ :\nIl réalise une prestation technique efficace, adaptée au contexte. Il peut analyser ses actions et ajuster son comportement.\n\nDegré 4 — Expert :\nIl exploite pleinement ses ressources, fait des choix pertinents et peut endosser des rôles d'encadrement (AFL3). Il est une ressource pour ses pairs.`;
+  }, 1000);
+}
+
+function genClasse() {
+  const obs = document.getElementById('obs-classe').value;
+  const out = document.getElementById('out-classe');
+  out.classList.add('show');
+  out.textContent = 'Génération en cours...';
+  const eng = document.getElementById('lbl-eng').textContent;
+  const tech = document.getElementById('lbl-tech').textContent;
+  const cond = document.getElementById('lbl-cond').textContent;
+  const auto = document.getElementById('lbl-auto').textContent;
+  const cons = document.getElementById('lbl-cons').textContent;
+  const anal = document.getElementById('lbl-anal').textContent;
+  const coop = document.getElementById('lbl-coop').textContent;
+  const resp = document.getElementById('lbl-resp').textContent;
+  const pris = document.getElementById('lbl-pris').textContent;
+  setTimeout(() => {
+    out.textContent = `ANALYSE DE CLASSE GÉNÉRÉE\n\nAxe moteur :\nEngagement physique : ${eng} | Niveau technique : ${tech} | Condition physique : ${cond}\n${obs ? 'Observations : '+obs+'\n' : ''}Priorité : ${parseInt(tech)<50?'différencier les situations techniques dès la séance 1':'renforcer la gestion de l\'effort sur la durée'}.\n\nAxe méthodologique :\nAutonomie : ${auto} | Compréhension consignes : ${cons} | Analyse de pratique : ${anal}\n${parseInt(auto)<50?'Les élèves ne sont pas encore capables d\'analyser leur propre pratique. Introduire progressivement des fiches d\'auto-évaluation à partir de la séance 3.':'Niveau méthodologique satisfaisant. Approfondir l\'auto-analyse et la planification personnelle dès la séance 2.'}\n\nAxe social :\nCoopération : ${coop} | Respect des règles : ${resp} | Prise de responsabilités : ${pris}\n${parseInt(pris)<50?'Peu d\'expérience dans les rôles sociaux. Prévoir une rotation systématique des rôles dès le début du cycle.':'Bonne cohésion. Capitaliser sur les dynamiques positives pour enrichir les rôles sociaux (AFL3).'}\n\nJustification pédagogique :\nCette analyse justifie : une pédagogie différenciée (axe moteur), des outils réflexifs (axe méthodologique) et une gestion par rôles sociaux formalisés (axe social) — conformes aux attendus institutionnels de l'Académie de Créteil.`;
+  }, 900);
+}
+
+// ---- Slider update ----
+function updateSlider(id, val, color) {
+  document.getElementById('lbl-'+id).textContent = val+'%';
+}
+
+function updateClasseAnalysis() {
+  const vals = {
+    eng: parseInt(document.getElementById('lbl-eng').textContent),
+    tech: parseInt(document.getElementById('lbl-tech').textContent),
+    cond: parseInt(document.getElementById('lbl-cond').textContent),
+    auto: parseInt(document.getElementById('lbl-auto').textContent),
+    cons: parseInt(document.getElementById('lbl-cons').textContent),
+    anal: parseInt(document.getElementById('lbl-anal').textContent),
+    coop: parseInt(document.getElementById('lbl-coop').textContent),
+    resp: parseInt(document.getElementById('lbl-resp').textContent),
+    pris: parseInt(document.getElementById('lbl-pris').textContent),
+  };
+  // Moteur text
+  const mAvg = Math.round((vals.eng+vals.tech+vals.cond)/3);
+  let motText = '';
+  if (mAvg >= 70) motText = 'Classe de bon niveau moteur général. Condition physique et engagement élevés. Axer sur la technique et l\'optimisation des ressources.';
+  else if (mAvg >= 50) motText = 'Niveau moteur intermédiaire. Hétérogénéité présente entre élèves sportifs et sédentaires. Différenciation pédagogique recommandée dès la séance 1.';
+  else motText = 'Classe en difficulté motrice. Engagement physique et niveau technique faibles. Priorité absolue : situations d\'entrée progressives et sécurisantes.';
+  document.getElementById('txt-moteur').textContent = motText;
+  // Methodo text
+  const meth = Math.round((vals.auto+vals.cons+vals.anal)/3);
+  let methText = '';
+  if (meth >= 70) methText = 'Bonne autonomie méthodologique. Élèves capables d\'analyser leur pratique. Introduire des fiches d\'auto-évaluation dès la séance 2.';
+  else if (meth >= 45) methText = 'Compréhension des consignes correcte mais autonomie et analyse de pratique à développer. Fiches d\'auto-évaluation à introduire progressivement (séance 3).';
+  else methText = 'Élèves dépendants des consignes, peu autonomes. Capacité réflexive très peu développée. Étayage fort nécessaire sur les 3 premières séances.';
+  document.getElementById('txt-methodo').textContent = methText;
+  // Social text
+  const soc = Math.round((vals.coop+vals.resp+vals.pris)/3);
+  let socText = '';
+  if (soc >= 70) socText = 'Excellent climat de classe. Coopération et respect solides. Capitaliser sur cette dynamique pour enrichir AFL3 (rôles variés et complexes).';
+  else if (soc >= 45) socText = 'Bonne ambiance générale. Respect des règles satisfaisant. Prise de responsabilités à formaliser via une rotation systématique des rôles sociaux.';
+  else socText = 'Cohésion sociale fragile. Rôles sociaux peu investis. Mettre en place dès la séance 1 un protocole clair d\'attribution des rôles et un travail explicite sur la coopération.';
+  document.getElementById('txt-social').textContent = socText;
+}
+
+// ---- File handling ----
+function handleFiles(files) {
+  if (!files || !files.length) return;
+  const status = document.getElementById('drop-status');
+  status.style.display = 'block';
+  status.textContent = `${files.length} fichier(s) reçu(s) — Analyse en cours...`;
+  const list = document.querySelector('#page-documents .card:nth-of-type(1) .card-title').parentElement;
+  Array.from(files).forEach(file => {
+    setTimeout(() => {
+      const ext = file.name.split('.').pop().toLowerCase();
+      const iconMap = {docx:'📄',pdf:'📄',xlsx:'📊',pptx:'📊'};
+      const icon = iconMap[ext] || '📎';
+      const typeMap = {
+        docx:'Document Word — Analyse automatique en cours',
+        pdf:'Document PDF — Lecture et classification',
+        xlsx:'Tableur Excel — Extraction des données',
+        pptx:'Présentation PowerPoint — Analyse des contenus'
+      };
+      const item = document.createElement('div');
+      item.className = 'fl-item';
+      item.innerHTML = `<span style="font-size:20px">${icon}</span><div style="flex:1"><div class="fl-name">${file.name}</div><div class="fl-type">${typeMap[ext]||'Fichier — En attente d\'analyse'}</div></div><span class="pill p-ok">✓ Chargé</span>`;
+      list.appendChild(item);
+      // Update missing elements
+      analyzeMissingElements(file.name);
+    }, 600);
+  });
+  setTimeout(() => {
+    status.textContent = `✓ ${files.length} fichier(s) chargé(s) avec succès`;
+    status.style.color = '#16A34A';
+  }, 1200);
+}
+
+function analyzeMissingElements(filename) {
+  const fn = filename.toLowerCase();
+  const missingDiv = document.querySelector('#page-documents .card:nth-of-type(2)');
+  if (!missingDiv) return;
+  const missingList = missingDiv.querySelector('[style*="FCEBEB"] div:last-child');
+  if (!missingList) return;
+  if (fn.includes('fiche') || fn.includes('niveau')) {
+    const items = missingList.querySelectorAll ? missingList.innerHTML : '';
+    missingList.innerHTML = missingList.innerHTML.replace('🔸 Fiches de niveau par APSA (6 APSA)', '✅ Fiches de niveau par APSA — chargées');
+  }
+  if (fn.includes('bilan') || fn.includes('seance') || fn.includes('sequence')) {
+    missingList.innerHTML = missingList.innerHTML.replace('🔸 Bilans de séances et séquences', '✅ Bilans de séances — chargés');
+  }
+  if (fn.includes('securite') || fn.includes('sécurité')) {
+    missingList.innerHTML = missingList.innerHTML.replace('🔸 Consignes de sécurité spécifiques', '✅ Consignes de sécurité — chargées');
+  }
+  if (fn.includes('programmation') || fn.includes('horaire')) {
+    missingList.innerHTML = missingList.innerHTML.replace('🔸 Programmation horaire (H.eff.)', '✅ Programmation horaire — chargée');
+  }
+}
+
+// ---- Projet EPS generator ----
+function genProjetEPS() {
+  const type = document.getElementById('proj-type')?.value || 'Lycée GT';
+  const loc = document.getElementById('proj-loc')?.value || 'non renseignée';
+  const nb = document.getElementById('proj-nb-eleves')?.value || '';
+  const pop = document.getElementById('proj-population')?.value || '';
+  const sections = document.getElementById('proj-sections')?.value || '';
+  const out = document.getElementById('out-projet');
+  out.classList.add('show');
+  out.textContent = 'Génération du projet EPS en cours...';
+  const secPro = sections && sections !== '' ? `\n\n⚙️ SECTIONS PROFESSIONNELLES (${sections.toUpperCase()}) :\nLes sections professionnelles bénéficient d\'une déclinaison spécifique des AFL en AFLP (Attendus de Fin de Lycée Professionnel), avec une attention particulière portée aux compétences transversales liées à l\'insertion professionnelle (coopération, gestion de projet, posture professionnelle — AFLP5).` : '';
+  const popText = pop ? `\n\n🏘️ CARACTÉRISTIQUES DE LA POPULATION :\n${pop}\n→ Ces caractéristiques justifient une pédagogie différenciée centrée sur l\'inclusion, la valorisation des ressources de chacun et l\'accès de tous aux pratiques sportives et culturelles.` : '';
+  setTimeout(() => {
+    out.textContent = `PROJET EPS — ${type.toUpperCase()}\n${loc}${nb?' — '+nb+' élèves':''}\n\n📌 ANCRAGE ACADÉMIQUE :\nCe projet s\'inscrit dans les 4 axes du projet académique de l\'Académie de Créteil :\n1. Maîtriser et partager les savoirs\n2. Fédérer les acteurs pour des trajectoires de réussite\n3. Engager les élèves à s\'ouvrir au monde\n4. Accroître la qualité de vie des personnels${popText}\n\n🎯 FINALITÉS DE L'EPS AU LYCÉE :\nL'EPS vise à former un lycéen physiquement éduqué, capable de s\'engager dans une pratique physique autonome et réfléchie, d\'exercer des responsabilités collectives et de construire une relation durable à sa santé.\n\n📋 PROGRAMMATION EPS (5 CA) :\n• 2nde : CA1 Demi-fond + CA4 Badminton → AFL1, AFL3\n• 1ère : CA1 Laser run + CA4 Ultimate → AFL1, AFL2, AFL3\n• Terminale : CA3 Step + CA5 Cross training → AFL1, AFL1', AFL2, AFL3${secPro}\n\n✅ MODALITÉS D'ÉVALUATION :\nÉvaluation formative continue (fiches de niveau à 4 degrés) + évaluation sommative conforme aux référentiels Bac GT. Outil commun de suivi des acquis partagé par toute l\'équipe EPS.\n\n📍 JUSTIFICATION PÉDAGOGIQUE :\nCe projet garantit la couverture des 5 Champs d\'Apprentissage, la déclinaison des AFL 1 à 3 sur les 3 niveaux du lycée, et une progression cohérente conforme aux attendus institutionnels de l\'Académie de Créteil.`;
+  }, 1200);
+}
+
+// ---- AFL Objectifs generator ----
+const AFL_DATA = {
+  'demi-fond': {
+    '2nde': {AFL1:'Identifier ses ressources physiologiques et courir en maintenant une allure sur 500m à 1km. Degré 3 visé : course régulière sans essoufflement majeur.',AFL2:'Tenir un carnet de course simple (allure, ressenti, objectif). Degré 3 : planifier son effort sur 2 séances consécutives.',AFL3:'Tenir le rôle de chronométreur ou observateur d\'allure. Degré 3 : rôle assumé avec précision pendant toute la durée de la course.'},
+    '1ère': {AFL1:'Gérer son effort sur 1 à 2km avec une stratégie d\'allure définie. Degré 3 : performance stable et reproductible à +/- 5%.',AFL2:'Planifier une préparation individuelle de 3 séances. Degré 3 : carnet structuré avec objectifs, bilans et ajustements.',AFL3:'Coacher un pair moins expérimenté. Degré 3 : conseils pertinents appuyés sur des observations objectives.'},
+    'Terminale': {AFL1:'Optimiser sa stratégie de course sur 3km+, analyse de performance. Degré 3 : performance reproductible avec régulation en temps réel.',AFL2:'Concevoir et évaluer un cycle d\'entraînement de 4 semaines. Degré 3 : plan structuré avec indicateurs de progression clairs.',AFL3:'Assumer le rôle d\'entraîneur de l\'équipe classe pour un mini-cross. Degré 3 : plan d\'entraînement collectif adapté aux niveaux.'}
+  },
+  'badminton': {
+    '2nde': {AFL1:'Mettre en difficulté l\'adversaire en variant les trajectoires. Degré 3 : points gagnants par placement intentionnel.',AFL2:'Observer son propre jeu et identifier ses points faibles. Degré 3 : bilan écrit de 2 matchs consécutifs.',AFL3:'Arbitrer un match selon le règlement officiel. Degré 3 : arbitrage sans contestation majeure sur toute la durée.'},
+    '1ère': {AFL1:'Construire le point par des enchaînements défense/attaque. Degré 3 : ratio attaque/défense > 50% sur un match.',AFL2:'Élaborer une tactique personnelle contre un adversaire identifié. Degré 3 : plan de jeu écrit appliqué sur au moins 50% des échanges.',AFL3:'Assurer le rôle d\'observateur avec fiche critériée. Degré 3 : observations exploitables par le joueur observé.'},
+    'Terminale': {AFL1:'Construire des schémas tactiques complexes (smash, amortis, lob défensif). Degré 3 : exploitation des failles adverses dans 60% des échanges longs.',AFL2:'Auto-évaluation vidéo d\'un match + plan de remédiation. Degré 3 : identification de 3 axes d\'amélioration pertinents.',AFL3:'Coacher un équipier entre deux sets. Degré 3 : conseils tactiques adaptés appliqués dès le set suivant.'}
+  },
+  'ultimate': {
+    '2nde': {AFL1:'Recevoir et transmettre le frisbee dans un espace défendu. Degré 3 : passe réussie sous marquage dans 60% des situations.',AFL2:'Comprendre et appliquer le règlement de l\'esprit du jeu. Degré 3 : jeu sans contact, auto-arbitrage efficace.',AFL3:'Tenir le rôle de handler (distributeur de jeu). Degré 3 : coordination de 3 actions d\'attaque consécutives.'},
+    '1ère': {AFL1:'Créer et exploiter des situations de surnombre (2 vs 1, 3 vs 2). Degré 3 : décision adaptée au rapport de force dans 55% des situations.',AFL2:'Élaborer une stratégie collective offensive simple. Degré 3 : schéma de jeu partagé par l\'équipe et appliqué.',AFL3:'Assumer le rôle de capitaine pour la gestion de l\'équipe. Degré 3 : gestion des remplacements et des temps morts.'},
+    'Terminale': {AFL1:'Maîtriser les systèmes de jeu offensifs et défensifs (force side, hors champ). Degré 3 : adaptation tactique en temps réel selon le contexte.',AFL2:'Préparer et diriger un échauffement tactique. Degré 3 : 10 minutes d\'échauffement structurées, adaptées au niveau de l\'équipe.',AFL3:'Arbitrage officiel d\'un match avec fiche de rapport. Degré 3 : rapport de match complet et objectif.'}
+  },
+  'step': {
+    '2nde': {AFL1:'Réaliser un enchaînement chorégraphique de 16 temps sur le step. Degré 3 : enchaînement propre, rythmé, sans perte de step.',AFL2:'Mémoriser et décrire son enchaînement par écrit. Degré 3 : fiche chorégraphique lisible et exploitable par un pair.',AFL3:'Observer et évaluer la prestation d\'un camarade selon 3 critères. Degré 3 : retour constructif et précis.'},
+    '1ère': {AFL1:'Composer et réaliser un enchaînement de 32 temps avec variations de niveau et de direction. Degré 3 : prestation maîtrisée et expressive.',AFL2:'Co-construire une chorégraphie avec un partenaire. Degré 3 : enchaînement synchronisé sur au moins 80% de la durée.',AFL3:'Juge d\'une prestation avec grille critériée. Degré 3 : notation cohérente avec celle de l\'enseignant (+/- 1 point).'},
+    'Terminale': {AFL1:'Présenter une chorégraphie collective de 1min30 selon un thème imposé. Degré 3 : prestation cohérente, engagée et adaptée au regard d\'un public.',AFL2:'Diriger la préparation du groupe et la transmission de la chorégraphie. Degré 3 : groupe opérationnel dans les délais impartis.',AFL3:'Mise en scène (lumières, musique, disposition) de la prestation. Degré 3 : choix scénographiques justifiés et cohérents.'}
+  },
+  'laser-run': {
+    '2nde': {AFL1:'Courir et tirer en gérant l\'effort entre les deux disciplines. Degré 3 : course stable avec précision de tir ≥ 3/5 au passage.',AFL2:'Anticiper la récupération cardiaque avant le tir. Degré 3 : stratégie de récupération consciente et appliquée.',AFL3:'Chronométrer et noter les résultats de l\'équipe. Degré 3 : relevés précis et tableau de résultats complet.'},
+    '1ère': {AFL1:'Optimiser la transition course-tir (récupération courte, tir efficace). Degré 3 : temps de transition ≤ 20 secondes avec précision ≥ 4/5.',AFL2:'Planifier une stratégie d\'allure pour la course en fonction du nombre de tirs. Degré 3 : plan de course documenté avec analyse post-épreuve.',AFL3:'Coach de l\'équipe pour les ajustements de tir. Degré 3 : conseils techniques sur la posture et la respiration.'},
+    'Terminale': {AFL1:'Performance globale optimisée sur distance complète. Degré 3 : classement dans le premier tiers sur épreuve complète.',AFL2:'Analyser la performance et concevoir un plan de progression. Degré 3 : analyse quantitative et qualitative avec indicateurs précis.',AFL3:'Organiser et diriger une compétition interne. Degré 3 : organisation complète (parcours, chrono, classement) sans intervention enseignant.'}
+  },
+  'cross': {
+    '2nde': {AFL1:'S\'engager dans un circuit de cross-training et terminer l\'ensemble des ateliers. Degré 3 : circuit complet avec technique correcte sur chaque atelier.',AFL2:'Connaître les paramètres de charge (séries, répétitions, récupération). Degré 3 : adapter sa charge en autonomie sur 2 séances consécutives.',AFL3:'Décrire et démontrer un exercice à un pair. Degré 3 : démonstration technique correcte avec cues verbaux adaptés.'},
+    '1ère': {AFL1:'Construire et réaliser un circuit personnalisé selon un objectif (force, endurance, puissance). Degré 3 : circuit cohérent avec l\'objectif, réalisé sur toute la durée.',AFL2:'Tenir un journal d\'entraînement sur 4 séances avec progression des charges. Degré 3 : progression documentée et justifiée.',AFL3:'Surveiller la sécurité d\'un pair sur les exercices de charge. Degré 3 : corrections pertinentes sans intervention de l\'enseignant.'},
+    'Terminale': {AFL1:'Atteindre un objectif de performance mesurable sur 6 semaines. Degré 3 : progrès quantifiable et justifié par des données de terrain.',AFL2:'Élaborer un plan d\'entraînement sur 6 séances avec variations de charge (ondulation). Degré 3 : plan structuré, suivi et réévalué mi-parcours.',AFL3:'Animer un groupe de 4 élèves sur un circuit de 20 minutes. Degré 3 : animation sécurisée, dynamique et adaptée aux niveaux du groupe.'}
+  }
+};
+
+let savedAFLObjectifs = [];
+
+function genAFLObjectifs() {
+  const apsa = document.getElementById('afl-apsa-select').value;
+  const niveau = document.getElementById('afl-niveau').value;
+  const data = AFL_DATA[apsa] && AFL_DATA[apsa][niveau];
+  const container = document.getElementById('afl-editable-container');
+  const result = document.getElementById('afl-result');
+  if (!data) return;
+  container.innerHTML = '';
+  const labels = {AFL1:'AFL1 — Performance', AFL2:'AFL2 — Entraînement', AFL3:'AFL3 — Rôles sociaux'};
+  const colors = {AFL1:'#1A56C4', AFL2:'#0D6E47', AFL3:'#C25C10'};
+  Object.entries(data).forEach(([key, val]) => {
+    const div = document.createElement('div');
+    div.className = 'afl-row';
+    div.style.marginBottom = '8px';
+    div.innerHTML = `<div class="afl-lbl" style="background:${colors[key]}">${key}</div><div class="afl-cnt"><strong>${labels[key]}</strong><br><textarea style="width:100%;border:1px solid #DDE2EA;border-radius:6px;padding:6px;font-size:12px;margin-top:4px;resize:vertical;min-height:60px;font-family:inherit" data-key="${key}">${val}</textarea></div>`;
+    container.appendChild(div);
+  });
+  result.style.display = 'block';
+}
+
+function saveAFLObjectifs() {
+  const apsa = document.getElementById('afl-apsa-select').value;
+  const niveau = document.getElementById('afl-niveau').value;
+  const textareas = document.querySelectorAll('#afl-editable-container textarea');
+  const saved = {apsa, niveau, aflData: {}};
+  textareas.forEach(ta => { saved.aflData[ta.dataset.key] = ta.value; });
+  savedAFLObjectifs = savedAFLObjectifs.filter(s => !(s.apsa===apsa && s.niveau===niveau));
+  savedAFLObjectifs.push(saved);
+  renderSavedAFL();
+  document.getElementById('afl-result').style.display = 'none';
+}
+
+function renderSavedAFL() {
+  const list = document.getElementById('afl-saved-list');
+  if (!savedAFLObjectifs.length) { list.innerHTML = ''; return; }
+  const apsaNames = {'demi-fond':'🏃 Demi-fond','laser-run':'🎯 Laser run','step':'💃 Step','ultimate':'🥏 Ultimate','badminton':'🏸 Badminton','cross':'💪 Cross training'};
+  list.innerHTML = '<div class="card-title" style="margin-bottom:10px">✅ Objectifs validés</div>' + savedAFLObjectifs.map((s,i) => `<div style="background:#F0F5FF;border:1px solid #C7D9F9;border-radius:8px;padding:10px 12px;margin-bottom:8px"><div style="font-weight:600;font-size:12px;margin-bottom:6px">${apsaNames[s.apsa]} — ${s.niveau}</div>${Object.entries(s.aflData).map(([k,v])=>`<div style="font-size:11px;color:#5A6580;margin-bottom:3px"><strong>${k} :</strong> ${v}</div>`).join('')}<button class="btn-sec" style="margin-top:6px;font-size:11px;padding:3px 8px" onclick="savedAFLObjectifs.splice(${i},1);renderSavedAFL()">✕ Supprimer</button></div>`).join('');
+}
+
+// ---- AFLP generator ----
+function genAFLP() {
+  const section = document.getElementById('aflp-section').value;
+  const apsa = document.getElementById('aflp-apsa').value;
+  const prio = document.getElementById('aflp-prio').value;
+  const out = document.getElementById('out-aflp');
+  out.classList.add('show');
+  out.textContent = 'Génération en cours...';
+  setTimeout(() => {
+    out.textContent = `AFLP PERSONNALISÉ — ${section.toUpperCase()}\nAPSA : ${apsa} | Priorité : ${prio}\n\nATTENDU DE FIN DE LYCÉE PROFESSIONNEL :\nÀ l\'issue de la formation, l\'élève de ${section} pratiquant ${apsa} doit être capable de :\n\n• [${prio}] S\'engager dans la pratique avec efficacité en lien avec les compétences professionnelles de la filière.\n• Analyser sa pratique et identifier ses points de progrès à l\'aide d\'outils adaptés à la section.\n• Assumer des rôles sociaux valorisant les postures professionnelles (organisation, communication, responsabilité).\n• Intégrer les exigences de sécurité spécifiques à l\'activité dans une logique de prévention des risques (compétence transversale Bac Pro).\n\nJUSTIFICATION PÉDAGOGIQUE :\nCet AFLP décline les finalités de l\'EPS en LP en articulant développement physique, méthodologique et insertion professionnelle. Il est cohérent avec le référentiel de la filière ${section} et les attendus du programme EPS LP (arrêté du 3 avril 2019).`;
+  }, 900);
+}
+</script>
+</body>
+</html>
